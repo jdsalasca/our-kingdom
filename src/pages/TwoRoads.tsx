@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const TwoRoads = () => {
+  const { t } = useTranslation();
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -9,10 +11,10 @@ const TwoRoads = () => {
     >
       <div className='text-center mb-12'>
         <h1 className='pixel-title text-5xl md:text-7xl mb-6'>
-          🛤️ Two Roads, One Destiny 🛤️
+          🛤️ {t('Two Roads, One Destiny')} 🛤️
         </h1>
         <p className='pixel-subtitle text-xl'>
-          Our paths crossed and created something magical...
+          {t('Our paths crossed and created something magical...')}
         </p>
       </div>
 
@@ -24,12 +26,12 @@ const TwoRoads = () => {
           transition={{ delay: 0.2 }}
           className='pixel-card bg-gradient-to-br from-pixel-green to-pixel-blue'
         >
-          <h2 className='pixel-title text-2xl mb-4'>🛣️ Your Road</h2>
+          <h2 className='pixel-title text-2xl mb-4'>🛣️ {t('Your Road')}</h2>
           <div className='space-y-4'>
             <div className='pixel-text'>
-              <p>🌟 Your journey began with...</p>
-              <p>💫 Your dreams and aspirations...</p>
-              <p>🎯 Your unique path in life...</p>
+              <p>🌟 {t('Your journey began with...')}</p>
+              <p>💫 {t('Your dreams and aspirations...')}</p>
+              <p>🎯 {t('Your unique path in life...')}</p>
             </div>
           </div>
         </motion.div>
@@ -41,12 +43,12 @@ const TwoRoads = () => {
           transition={{ delay: 0.4 }}
           className='pixel-card bg-gradient-to-br from-pixel-purple to-pixel-pink'
         >
-          <h2 className='pixel-title text-2xl mb-4'>🛣️ My Road</h2>
+          <h2 className='pixel-title text-2xl mb-4'>🛣️ {t('My Road')}</h2>
           <div className='space-y-4'>
             <div className='pixel-text'>
-              <p>🌟 My journey began with...</p>
-              <p>💫 My dreams and aspirations...</p>
-              <p>🎯 My unique path in life...</p>
+              <p>🌟 {t('My journey began with...')}</p>
+              <p>💫 {t('My dreams and aspirations...')}</p>
+              <p>🎯 {t('My unique path in life...')}</p>
             </div>
           </div>
         </motion.div>
@@ -60,11 +62,9 @@ const TwoRoads = () => {
         className='text-center mt-12'
       >
         <div className='pixel-card bg-gradient-to-br from-pixel-yellow to-pixel-orange max-w-2xl mx-auto'>
-          <h2 className='pixel-title text-3xl mb-6'>💕 Where Our Roads Meet</h2>
+          <h2 className='pixel-title text-3xl mb-6'>💕 {t('Where Our Roads Meet')}</h2>
           <p className='pixel-text text-lg'>
-            Here, in this magical intersection, our separate journeys became one
-            beautiful adventure together. Every step we take now, we take hand
-            in hand, building our own happy kingdom.
+            {t('Here, in this magical intersection, our separate journeys became one beautiful adventure together. Every step we take now, we take hand in hand, building our own happy kingdom.')}
           </p>
         </div>
       </motion.div>

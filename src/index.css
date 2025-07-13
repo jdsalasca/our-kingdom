@@ -494,4 +494,106 @@
           transparent 24px
         );
   }
+
+  /* Additional responsive utilities */
+  .text-responsive {
+    @apply text-sm sm:text-base md:text-lg lg:text-xl;
+  }
+
+  .spacing-responsive {
+    @apply p-2 sm:p-4 md:p-6 lg:p-8;
+  }
+
+  .grid-responsive {
+    @apply grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+  }
+
+  /* Enhanced button states */
+  .pixel-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .pixel-button:focus {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+  }
+
+  /* Enhanced card hover effects */
+  .pixel-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      6px 6px 0px #000,
+      inset 2px 2px 0px rgba(255, 255, 255, 0.3);
+  }
+
+  /* Music player specific styles */
+  .music-player-card {
+    @apply pixel-card bg-gradient-to-br from-pixel-green to-pixel-blue;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .music-controls {
+    @apply flex justify-center items-center gap-4;
+  }
+
+  .music-button {
+    @apply pixel-button p-2 md:p-3;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Game card specific styles */
+  .game-card {
+    @apply pixel-card cursor-pointer transition-all duration-300;
+  }
+
+  .game-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Memory game specific styles */
+  .memory-card {
+    @apply aspect-square rounded-lg border-2 border-pixel-purple flex items-center justify-center;
+    transition: all 0.3s ease;
+  }
+
+  .memory-card.flipped {
+    @apply bg-pixel-pink text-white;
+  }
+
+  .memory-card.matched {
+    @apply bg-pixel-green text-white;
+  }
+
+  .memory-card.unflipped {
+    @apply bg-pixel-purple text-transparent hover:bg-pixel-pink;
+  }
+
+  /* Quiz specific styles */
+  .quiz-option {
+    @apply pixel-button bg-pixel-purple hover:bg-pixel-pink text-left p-3 w-full;
+    transition: all 0.2s ease;
+  }
+
+  .quiz-option:hover {
+    transform: translateX(5px);
+  }
+
+  /* Language switcher specific styles */
+  .language-button {
+    @apply pixel-button px-2 py-1 text-xs;
+    min-width: 32px;
+  }
+
+  .language-button.active {
+    @apply bg-pixel-green text-white;
+  }
+
+  .language-button.inactive {
+    @apply bg-white text-pixel-green;
+  }
 }
