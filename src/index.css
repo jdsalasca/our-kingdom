@@ -66,10 +66,12 @@
 
   /* Enhanced Pixel Button */
   .pixel-button {
-    @apply border-4 border-black bg-green-600 text-white font-pixel px-6 py-3 
-           hover:bg-blue-600 hover:animate-pixel-bounce 
+    @apply border-4 border-black bg-green-600 text-white px-6 py-3 
+           hover:bg-blue-600
            active:transform active:scale-95 transition-all duration-150
            relative overflow-hidden;
+    font-family: 'Press Start 2P', monospace;
+    animation: pixel-bounce 0.6s ease-in-out;
     box-shadow:
       4px 4px 0px #000,
       inset 2px 2px 0px rgba(255, 255, 255, 0.3);
@@ -125,17 +127,20 @@
 
   /* Enhanced Text Styles */
   .pixel-text {
-    @apply font-pixel text-black leading-relaxed;
+    @apply text-black leading-relaxed;
+    font-family: 'Press Start 2P', monospace;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
   }
 
   .pixel-title {
-    @apply font-pixel text-2xl md:text-3xl text-center mb-6 text-purple-600;
+    @apply text-2xl md:text-3xl text-center mb-6 text-purple-600;
+    font-family: 'Press Start 2P', monospace;
     text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
   }
 
   .pixel-subtitle {
-    @apply font-retro text-lg text-center mb-4 text-orange-800;
+    @apply text-lg text-center mb-4 text-orange-800;
+    font-family: 'VT323', monospace;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
   }
 
