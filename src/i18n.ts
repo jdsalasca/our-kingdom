@@ -17,6 +17,10 @@ const resources = {
       'About Us': 'About Us',
       'Learn more about our story and the love that built this kingdom!': 'Learn more about our story and the love that built this kingdom!',
       'Our Story →': 'Our Story →',
+      'Gallery': 'Gallery',
+      'Our Gallery': 'Our Gallery',
+      'Beautiful memories captured in our pixel-art kingdom!': 'Beautiful memories captured in our pixel-art kingdom!',
+      'View Memories →': 'View Memories →',
       'Made with 💕 for our happy kingdom together': 'Made with 💕 for our happy kingdom together',
       // OurPlay
       "Let's have fun together in our pixel paradise!": "Let's have fun together in our pixel paradise!",
@@ -110,6 +114,10 @@ const resources = {
       'About Us': 'Sobre Nosotros',
       'Learn more about our story and the love that built this kingdom!': '¡Conoce más sobre nuestra historia y el amor que construyó este reino!',
       'Our Story →': 'Nuestra Historia →',
+      'Gallery': 'Galería',
+      'Our Gallery': 'Nuestra Galería',
+      'Beautiful memories captured in our pixel-art kingdom!': '¡Hermosos recuerdos capturados en nuestro reino de pixel-art!',
+      'View Memories →': 'Ver Recuerdos →',
       'Made with 💕 for our happy kingdom together': 'Hecho con 💕 para nuestro reino feliz juntos',
       // OurPlay
       "Let's have fun together in our pixel paradise!": '¡Divirtámonos juntos en nuestro paraíso de píxeles!',

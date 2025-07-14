@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import TwoRoads from './pages/TwoRoads';
 import OurPlay from './pages/OurPlay';
 import AboutUs from './pages/AboutUs';
+import Gallery from './components/Gallery';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import MusicPlayer from './components/MusicPlayer';
@@ -13,10 +14,12 @@ function App() {
   const { t } = useTranslation();
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-br from-pixel-green via-pixel-blue to-pixel-purple bg-pixel-pattern">
+      <div className="min-h-screen bg-gradient-to-br from-pixel-green via-pixel-blue to-pixel-purple bg-pixel-pattern relative">
+        {/* Background Overlay for Contrast */}
+        <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none" />
         {/* TAILWIND TEST BANNER */}
         <motion.div 
-          className="pixel-border bg-pixel-green text-white text-center py-2 pixel-title tracking-widest shadow-lg"
+          className="pixel-border bg-pixel-green text-white text-center py-2 pixel-title tracking-widest shadow-lg relative z-10"
           animate={{ 
             boxShadow: [
               "0 4px 8px rgba(0,0,0,0.3)",
@@ -26,100 +29,59 @@ function App() {
           }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          Tailwind is <span className="text-pixel-yellow">WORKING!</span> 🎉
         </motion.div>
         
         {/* Enhanced Navigation */}
-        <nav className="pixel-border bg-white/90 backdrop-blur-sm sticky top-0 z-50 shadow-lg">
-          <div className="max-w-6xl mx-auto px-4 py-3 md:py-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <nav className="pixel-border bg-[#232336] backdrop-blur-md sticky top-0 z-30 shadow-2xl">
+          <div className="max-w-6xl mx-auto px-4 py-4 md:py-5">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-2 md:mb-0"
               >
                 <motion.h1 
-                  className="pixel-title flex items-center gap-2 text-lg md:text-xl lg:text-2xl"
+                  className="pixel-title flex items-center gap-2 text-lg md:text-xl lg:text-2xl text-[#f4d03f] drop-shadow-lg"
                   whileHover={{ scale: 1.05 }}
                 >
-                  <motion.span 
-                    className="text-xl md:text-2xl"
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity }}
-                  >
-                    👑
-                  </motion.span>
+                  <img src="/pixel-art-icon-heart_682225-16.avif" alt="Pixel Heart" className="inline-block w-8 h-8 align-middle" />
                   {t('Our Happy Kingdom')}
-                  <motion.span 
-                    className="text-xl md:text-2xl"
-                    animate={{ rotate: [0, -10, 10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, delay: 2 }}
-                  >
-                    👑
-                  </motion.span>
+                  <img src="/pixel-art-icon-heart_682225-16.avif" alt="Pixel Heart" className="inline-block w-8 h-8 align-middle" />
                 </motion.h1>
               </motion.div>
               
-              <div className="flex flex-wrap gap-2 md:gap-4 justify-center items-center">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <Link to="/" className="pixel-button group text-sm md:text-base">
-                    <span className="flex items-center gap-1 md:gap-2">
-                      <span className="text-base md:text-lg">🏠</span>
-                      <span className="hidden sm:inline">{t('Dashboard')}</span>
-                    </span>
-                  </Link>
-                </motion.div>
-                
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <Link to="/two-roads" className="pixel-button group text-sm md:text-base">
-                    <span className="flex items-center gap-1 md:gap-2">
-                      <span className="text-base md:text-lg">🛤️</span>
-                      <span className="hidden sm:inline">{t('Two Roads')}</span>
-                    </span>
-                  </Link>
-                </motion.div>
-                
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <Link to="/our-play" className="pixel-button group text-sm md:text-base">
-                    <span className="flex items-center gap-1 md:gap-2">
-                      <span className="text-base md:text-lg">🎮</span>
-                      <span className="hidden sm:inline">{t('Our Play')}</span>
-                    </span>
-                  </Link>
-                </motion.div>
-                
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  <Link to="/about-us" className="pixel-button group text-sm md:text-base">
-                    <span className="flex items-center gap-1 md:gap-2">
-                      <span className="text-base md:text-lg">💕</span>
-                      <span className="hidden sm:inline">{t('About Us')}</span>
-                    </span>
-                  </Link>
-                </motion.div>
-                
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <LanguageSwitcher />
-                </motion.div>
+              <div className="flex flex-wrap gap-3 md:gap-6 justify-center items-center">
+                <Link to="/" className="pixel-button">
+                  <span className="flex items-center gap-2">
+                    <span className="text-base md:text-lg">🏠</span>
+                    <span className="hidden sm:inline">{t('Dashboard')}</span>
+                  </span>
+                </Link>
+                <Link to="/two-roads" className="pixel-button">
+                  <span className="flex items-center gap-2">
+                    <span className="text-base md:text-lg">🛤️</span>
+                    <span className="hidden sm:inline">{t('Two Roads')}</span>
+                  </span>
+                </Link>
+                <Link to="/our-play" className="pixel-button">
+                  <span className="flex items-center gap-2">
+                    <span className="text-base md:text-lg">🎮</span>
+                    <span className="hidden sm:inline">{t('Our Play')}</span>
+                  </span>
+                </Link>
+                <Link to="/gallery" className="pixel-button">
+                  <span className="flex items-center gap-2">
+                    <span className="text-base md:text-lg">📸</span>
+                    <span className="hidden sm:inline">{t('Gallery')}</span>
+                  </span>
+                </Link>
+                <Link to="/about-us" className="pixel-button">
+                  <span className="flex items-center gap-2">
+                    <span className="text-base md:text-lg">💕</span>
+                    <span className="hidden sm:inline">{t('About Us')}</span>
+                  </span>
+                </Link>
+                <LanguageSwitcher />
               </div>
             </div>
           </div>
@@ -131,6 +93,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/two-roads" element={<TwoRoads />} />
             <Route path="/our-play" element={<OurPlay />} />
+            <Route path="/gallery" element={<Gallery />} />
             <Route path="/about-us" element={<AboutUs />} />
           </Routes>
         </main>

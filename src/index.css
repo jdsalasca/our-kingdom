@@ -46,11 +46,17 @@
 @layer components {
   /* Enhanced Pixel Border */
   .pixel-border {
-    border: 4px solid #000;
-    box-shadow:
+    @apply border-4 shadow-lg relative;
+    border-color: #232336;
+  }
+
+  .pixel-border-2 {
+    @apply border-4 shadow-lg relative;
+    border-color: #232336;
+    box-shadow: 
+      0 0 0 4px #fff,
       4px 4px 0px #000,
-      inset 2px 2px 0px rgba(255, 255, 255, 0.3);
-    position: relative;
+      inset 2px 2px 0px rgba(255,255,255,0.3);
   }
 
   .pixel-border::before {
@@ -66,44 +72,56 @@
 
   /* Enhanced Pixel Button */
   .pixel-button {
-    @apply border-4 border-black bg-green-600 text-white px-6 py-3 
-           hover:bg-blue-600
-           active:transform active:scale-95 transition-all duration-150
-           relative overflow-hidden;
+    border: 4px solid #232336;
+    background: linear-gradient(135deg, #4a7c59 0%, #4a90e2 100%);
+    color: #fff;
+    padding: 0.75rem 1.5rem;
     font-family: 'Press Start 2P', monospace;
-    animation: pixel-bounce 0.6s ease-in-out;
-    box-shadow:
-      4px 4px 0px #000,
-      inset 2px 2px 0px rgba(255, 255, 255, 0.3);
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 0 4px #fff, 4px 4px 0px #000, inset 2px 2px 0px rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.15s, box-shadow 0.2s;
+    text-shadow: 1px 1px 0 #232336, 2px 2px 0 #000;
+    z-index: 1;
   }
-
-  .pixel-button::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
-    transition: left 0.5s;
+  .pixel-button:hover {
+    background: linear-gradient(135deg, #e91e63 0%, #9b59b6 100%);
+    color: #fff;
+    box-shadow: 0 0 0 4px #fff, 6px 6px 0px #000, 0 0 8px #e91e63, inset 2px 2px 0px rgba(255,255,255,0.3);
+    transform: translateY(-2px) scale(1.04);
+    z-index: 2;
   }
-
-  .pixel-button:hover::after {
-    left: 100%;
+  .pixel-button:active {
+    background: linear-gradient(135deg, #f4d03f 0%, #e67e22 100%);
+    color: #232336;
+    box-shadow: 0 0 0 4px #fff, 2px 2px 0px #000, 0 0 4px #f4d03f, inset 2px 2px 0px rgba(255,255,255,0.3);
+    transform: scale(0.97);
+    z-index: 2;
+  }
+  .pixel-button:focus {
+    outline: 2px dashed #f4d03f;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px #f4d03f, 0 0 8px #f4d03f, 4px 4px 0px #000;
+    z-index: 3;
+  }
+  .pixel-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 0 0 4px #fff, 2px 2px 0px #000, inset 2px 2px 0px rgba(255,255,255,0.3);
   }
 
   /* Enhanced Pixel Card */
   .pixel-card {
-    @apply border-4 border-black bg-white p-6 m-4 shadow-lg relative overflow-hidden;
-    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-    box-shadow:
-      4px 4px 0px #000,
-      inset 2px 2px 0px rgba(255, 255, 255, 0.3);
+    @apply border-4 p-6 m-4 rounded-xl shadow-lg relative overflow-hidden;
+    border-color: #232336;
+    background: #232336;
+    color: #fff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .pixel-card::before {
@@ -114,6 +132,15 @@
     right: 0;
     height: 4px;
     background: linear-gradient(90deg, #4a7c59, #4a90e2, #9b59b6, #e67e22);
+  }
+
+  .pixel-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+      0 20px 40px rgba(0,0,0,0.4),
+      0 0 0 4px #fff,
+      6px 6px 0px #000,
+      0 0 20px rgba(233, 30, 99, 0.3);
   }
 
   /* Enhanced Pixel Window */
@@ -133,9 +160,12 @@
   }
 
   .pixel-title {
-    @apply text-2xl md:text-3xl text-center mb-6 text-purple-600;
+    @apply text-2xl md:text-3xl text-center mb-6 drop-shadow-lg;
     font-family: 'Press Start 2P', monospace;
-    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+    color: #f4d03f;
+    text-shadow: 
+      2px 2px 0px #000,
+      4px 4px 0px rgba(0,0,0,0.5);
   }
 
   .pixel-subtitle {
@@ -202,6 +232,165 @@
       opacity: 1;
       transform: scale(1.2);
     }
+  }
+
+  /* Enhanced Pixel Art Transitions */
+  .pixel-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .pixel-hover {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .pixel-hover:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+      0 12px 24px rgba(0,0,0,0.3),
+      0 0 0 4px #fff,
+      4px 4px 0px #000;
+  }
+
+  /* Gallery Specific Styles */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 4px solid #232336;
+    background: #232336;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+      0 0 0 4px #fff,
+      4px 4px 0px #000,
+      inset 2px 2px 0px rgba(255,255,255,0.3);
+  }
+
+  .gallery-item:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 
+      0 20px 40px rgba(0,0,0,0.4),
+      0 0 0 4px #fff,
+      6px 6px 0px #000,
+      0 0 20px rgba(233, 30, 99, 0.3);
+  }
+
+  .gallery-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,0.8) 0%,
+      rgba(0,0,0,0.4) 50%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: 1.5rem;
+  }
+
+  .gallery-item:hover .gallery-overlay {
+    opacity: 1;
+  }
+
+  /* Enhanced Music Player Styles */
+  .music-player-card {
+    background: linear-gradient(135deg, #9b59b6 0%, #e91e63 100%);
+    border: 4px solid #000;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 
+      0 0 0 4px #fff,
+      6px 6px 0px #000,
+      0 0 20px rgba(233, 30, 99, 0.3),
+      inset 2px 2px 0px rgba(255,255,255,0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .music-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .music-button {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.125rem;
+    border: 3px solid #232336;
+    box-shadow: 
+      0 0 0 3px #fff,
+      3px 3px 0px #000,
+      inset 2px 2px 0px rgba(255,255,255,0.3);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .music-button:hover {
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 
+      0 0 0 3px #fff,
+      4px 4px 0px #000,
+      0 0 8px rgba(233, 30, 99, 0.5),
+      inset 2px 2px 0px rgba(255,255,255,0.3);
+  }
+
+  /* Volume Slider Styling */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-track {
+    background: #232336;
+    height: 8px;
+    border-radius: 4px;
+    border: 2px solid #000;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #e91e63;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    border: 3px solid #000;
+    box-shadow: 
+      0 0 0 2px #fff,
+      2px 2px 0px #000;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    background: #f4d03f;
+    transform: scale(1.1);
+  }
+
+  /* Enhanced Modal Styles */
+  .pixel-modal {
+    background: linear-gradient(135deg, #232336 0%, #4a7c59 100%);
+    border: 4px solid #000;
+    box-shadow: 
+      0 0 0 4px #fff,
+      8px 8px 0px #000,
+      0 0 30px rgba(233, 30, 99, 0.4),
+      inset 2px 2px 0px rgba(255,255,255,0.3);
   }
 
   /* Sprite Styles */
@@ -497,15 +686,70 @@
 
   /* Additional responsive utilities */
   .text-responsive {
-    @apply text-sm sm:text-base md:text-lg lg:text-xl;
+    font-size: 0.875rem;
+  }
+  
+  @media (min-width: 640px) {
+    .text-responsive {
+      font-size: 1rem;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .text-responsive {
+      font-size: 1.125rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .text-responsive {
+      font-size: 1.25rem;
+    }
   }
 
   .spacing-responsive {
-    @apply p-2 sm:p-4 md:p-6 lg:p-8;
+    padding: 0.5rem;
+  }
+  
+  @media (min-width: 640px) {
+    .spacing-responsive {
+      padding: 1rem;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .spacing-responsive {
+      padding: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .spacing-responsive {
+      padding: 2rem;
+    }
   }
 
   .grid-responsive {
-    @apply grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  @media (min-width: 640px) {
+    .grid-responsive {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .grid-responsive {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .grid-responsive {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
 
   /* Enhanced button states */
@@ -530,24 +774,47 @@
 
   /* Music player specific styles */
   .music-player-card {
-    @apply pixel-card bg-gradient-to-br from-pixel-green to-pixel-blue;
-    max-width: 400px;
+    border: 4px solid #000;
+    background: linear-gradient(135deg, #4a7c59 0%, #4a90e2 100%);
+    padding: 1.5rem;
     margin: 0 auto;
+    box-shadow: 4px 4px 0px #000, inset 2px 2px 0px rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    max-width: 400px;
   }
 
   .music-controls {
-    @apply flex justify-center items-center gap-4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
   }
 
   .music-button {
-    @apply pixel-button p-2 md:p-3;
+    border: 4px solid #000;
+    background-color: #4a7c59;
+    color: #fff;
+    padding: 0.5rem 0.75rem;
+    font-family: 'Press Start 2P', monospace;
+    box-shadow: 4px 4px 0px #000, inset 2px 2px 0px rgba(255, 255, 255, 0.3);
     min-width: 44px;
     min-height: 44px;
+    cursor: pointer;
   }
 
   /* Game card specific styles */
   .game-card {
-    @apply pixel-card cursor-pointer transition-all duration-300;
+    border: 4px solid #000;
+    background-color: #fff;
+    padding: 1.5rem;
+    margin: 1rem;
+    box-shadow: 4px 4px 0px #000, inset 2px 2px 0px rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    cursor: pointer;
+    transition: all 0.3s ease;
   }
 
   .game-card:hover {
@@ -557,43 +824,73 @@
 
   /* Memory game specific styles */
   .memory-card {
-    @apply aspect-square rounded-lg border-2 border-pixel-purple flex items-center justify-center;
+    aspect-ratio: 1;
+    border-radius: 0.5rem;
+    border: 2px solid #9b59b6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.3s ease;
   }
 
   .memory-card.flipped {
-    @apply bg-pixel-pink text-white;
+    background-color: #e91e63;
+    color: #fff;
   }
 
   .memory-card.matched {
-    @apply bg-pixel-green text-white;
+    background-color: #4a7c59;
+    color: #fff;
   }
 
   .memory-card.unflipped {
-    @apply bg-pixel-purple text-transparent hover:bg-pixel-pink;
+    background-color: #9b59b6;
+    color: transparent;
+  }
+
+  .memory-card.unflipped:hover {
+    background-color: #e91e63;
   }
 
   /* Quiz specific styles */
   .quiz-option {
-    @apply pixel-button bg-pixel-purple hover:bg-pixel-pink text-left p-3 w-full;
+    border: 4px solid #000;
+    background-color: #9b59b6;
+    color: #fff;
+    padding: 0.75rem;
+    width: 100%;
+    text-align: left;
+    font-family: 'Press Start 2P', monospace;
+    box-shadow: 4px 4px 0px #000, inset 2px 2px 0px rgba(255, 255, 255, 0.3);
     transition: all 0.2s ease;
+    cursor: pointer;
   }
 
   .quiz-option:hover {
+    background-color: #e91e63;
     transform: translateX(5px);
   }
 
   /* Language switcher specific styles */
   .language-button {
-    @apply pixel-button px-2 py-1 text-xs;
+    border: 4px solid #000;
+    background-color: #4a7c59;
+    color: #fff;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-family: 'Press Start 2P', monospace;
+    box-shadow: 4px 4px 0px #000, inset 2px 2px 0px rgba(255, 255, 255, 0.3);
     min-width: 32px;
+    cursor: pointer;
   }
 
   .language-button.active {
-    @apply bg-pixel-green text-white;
+    background-color: #4a7c59;
+    color: #fff;
   }
 
   .language-button.inactive {
-    @apply bg-white text-pixel-green;
+    background-color: #fff;
+    color: #4a7c59;
   }
 }

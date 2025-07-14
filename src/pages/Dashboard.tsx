@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   Character,
   Heart,
@@ -14,6 +15,8 @@ import {
 const Dashboard = () => {
   const { t } = useTranslation();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [showSpecialCard, setShowSpecialCard] = useState(false);
+  const navigate = useNavigate();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -54,6 +57,17 @@ const Dashboard = () => {
       icon2: <Star className='ml-2' />,
     },
     {
+      id: 'gallery',
+      title: t('Our Gallery'),
+      description: t('Beautiful memories captured in our pixel-art kingdom!'),
+      buttonText: t('View Memories →'),
+      color: 'from-pixel-purple to-pixel-pink',
+      glow: 'glow-blue',
+      emoji: '📸',
+      icon1: <Flower color='pink' className='mr-2' />,
+      icon2: <Flower color='purple' className='ml-2' />,
+    },
+    {
       id: 'about-us',
       title: t('About Us'),
       description: t('Learn more about our story and the love that built this kingdom!'),
@@ -76,9 +90,9 @@ const Dashboard = () => {
       {/* Hero Section */}
       <motion.div
         variants={itemVariants}
-        className='text-center mb-8 md:mb-12 relative'
+        className='text-center mb-8 md:mb-12 relative flex flex-col items-center z-10'
       >
-        <div className='absolute inset-0 flex justify-center items-center pointer-events-none'>
+        <div className='absolute inset-0 flex justify-center items-center pointer-events-none z-0'>
           <motion.div
             animate={{ 
               scale: [1, 1.1, 1],
@@ -93,26 +107,28 @@ const Dashboard = () => {
             <Castle className='opacity-20 scale-150' />
           </motion.div>
         </div>
-        <motion.h1 
-          className='pixel-title text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-4 md:mb-6 relative z-10'
-          animate={{ 
-            textShadow: [
-              "0 0 20px rgba(255,255,255,0.5)",
-              "0 0 40px rgba(255,255,255,0.8)",
-              "0 0 20px rgba(255,255,255,0.5)"
-            ]
-          }}
-          transition={{ duration: 3, repeat: Infinity }}
-        >
-          👑 {t('Our Happy Kingdom')} 👑
-        </motion.h1>
-        <motion.p 
-          className='pixel-subtitle text-lg sm:text-xl md:text-2xl relative z-10'
-          animate={{ opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          {t('Welcome to our magical pixel world together! 💕')}
-        </motion.p>
+        <motion.div className="inline-block px-6 py-4 rounded-xl bg-black/60 backdrop-blur-md shadow-2xl mb-4 md:mb-6 relative z-10">
+          <motion.h1 
+            className='pixel-title text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-2 text-yellow-300 drop-shadow-xl'
+            animate={{ 
+              textShadow: [
+                "0 0 20px rgba(255,255,255,0.5)",
+                "0 0 40px rgba(255,255,255,0.8)",
+                "0 0 20px rgba(255,255,255,0.5)"
+              ]
+            }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            👑 {t('Our Happy Kingdom')} 👑
+          </motion.h1>
+          <motion.p 
+            className='pixel-subtitle text-lg sm:text-xl md:text-2xl mt-2 text-pink-200 drop-shadow-lg'
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            {t('Welcome to our magical pixel world together! 💕')}
+          </motion.p>
+        </motion.div>
 
         {/* Character Sprites */}
         <div className='flex justify-center items-center gap-4 md:gap-8 mt-6 md:mt-8 relative z-10'>
@@ -153,9 +169,12 @@ const Dashboard = () => {
             }`}
             onHoverStart={() => setHoveredCard(card.id)}
             onHoverEnd={() => setHoveredCard(null)}
-            whileHover={{ 
-              y: -5,
-              boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+            whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.3)" }}
+            onClick={() => {
+              if (card.id === 'two-roads') navigate('/two-roads');
+              if (card.id === 'our-play') navigate('/our-play');
+              if (card.id === 'gallery') navigate('/gallery');
+              if (card.id === 'about-us') navigate('/about-us');
             }}
           >
             <div className='text-center p-4 md:p-6'>
@@ -180,7 +199,45 @@ const Dashboard = () => {
             </div>
           </motion.div>
         ))}
+        {/* Special Card */}
+        <motion.div
+          variants={itemVariants}
+          className='pixel-card bg-gradient-to-br from-pixel-pink to-pixel-yellow cursor-pointer transition-all duration-300 hover:scale-105 shadow-2xl flex flex-col items-center justify-center'
+          onClick={() => setShowSpecialCard(true)}
+          whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.3)" }}
+        >
+          <span className='text-4xl mb-2'>💌</span>
+          <h3 className='pixel-title text-lg md:text-xl mb-3 md:mb-4'>Carta Especial</h3>
+          <p className='pixel-text mb-4 md:mb-6 text-sm md:text-base'>Haz clic para leer una carta especial escrita solo para ti.</p>
+        </motion.div>
       </div>
+      {/* Special Card Modal */}
+      {showSpecialCard && (
+        <div className='fixed inset-0 bg-black/70 flex items-center justify-center z-50'>
+          <div className='pixel-card bg-gradient-to-br from-pixel-yellow to-pixel-pink max-w-lg mx-auto text-center relative flex flex-col items-center'>
+            <button className='absolute top-2 right-2 pixel-button flex items-center justify-center p-2' onClick={() => setShowSpecialCard(false)} aria-label='Cerrar'>
+              {/* Pixel-art X icon */}
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="16" height="16" fill="#fff" stroke="#000" strokeWidth="2"/>
+                <rect x="5" y="5" width="10" height="2" fill="#e91e63" transform="rotate(45 10 10)" />
+                <rect x="5" y="5" width="10" height="2" fill="#e91e63" transform="rotate(-45 10 10)" />
+              </svg>
+            </button>
+            {/* Pixel-art Heart Logo */}
+            <div className='my-4'>
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="16" y="24" width="32" height="32" fill="#e91e63" stroke="#000" strokeWidth="4"/>
+                <rect x="8" y="32" width="16" height="16" fill="#e91e63" stroke="#000" strokeWidth="4"/>
+                <rect x="40" y="32" width="16" height="16" fill="#e91e63" stroke="#000" strokeWidth="4"/>
+                <rect x="24" y="16" width="16" height="16" fill="#e91e63" stroke="#000" strokeWidth="4"/>
+              </svg>
+            </div>
+            <h2 className='pixel-title text-2xl mb-4'>Carta Especial</h2>
+            <p className='pixel-text text-lg mb-4'>Este es un mensaje de ejemplo. ¡Puedes editar este mensaje para escribirle algo especial a tu persona favorita! 💖</p>
+            <span className='text-4xl'>💖👑</span>
+          </div>
+        </div>
+      )}
 
       {/* Enhanced Decorative Elements */}
       <div className='mt-8 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 px-4'>

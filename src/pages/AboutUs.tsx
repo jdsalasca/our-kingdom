@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
 
 const AboutUs = () => {
   const { t } = useTranslation();
@@ -31,6 +32,15 @@ const AboutUs = () => {
     },
   ];
 
+  // Days since March 15, 2023
+  const [daysTogether, setDaysTogether] = useState(0);
+  useEffect(() => {
+    const startDate = new Date(2025, 2, 15); // March is month 2 (0-indexed)
+    const today = new Date();
+    const diff = today.getTime() - startDate.getTime();
+    setDaysTogether(Math.floor(diff / (1000 * 60 * 60 * 24)));
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -41,6 +51,14 @@ const AboutUs = () => {
         <h1 className='pixel-title text-5xl md:text-7xl mb-6'>
           💕 {t('About Us')} 💕
         </h1>
+        {/* Days Counter */}
+        <div className='flex flex-col items-center justify-center mb-6'>
+          <div className='flex items-center gap-2 bg-pixel-yellow text-pixel-purple px-6 py-2 rounded-xl shadow-lg border-4 border-pixel-purple font-pixel text-xl md:text-2xl'>
+            <span role="img" aria-label="Pixel Heart" style={{ fontSize: '2rem' }}>❤️‍🔥</span>
+            <span>{daysTogether} días juntos</span>
+            <span role="img" aria-label="Pixel Heart" style={{ fontSize: '2rem' }}>❤️‍🔥</span>
+          </div>
+        </div>
         <p className='pixel-subtitle text-xl'>{t('Our love story in pixels...')}</p>
       </div>
 
