@@ -10,7 +10,11 @@ interface Song {
   emoji: string;
 }
 
-const MusicPlayer = () => {
+interface MusicPlayerProps {
+  autoPlay?: boolean;
+}
+
+const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -100,10 +104,10 @@ const MusicPlayer = () => {
     nextSong();
   };
 
-  // Auto-play music 3 seconds after page load or navigation (faster for better UX)
+  // Auto-play music when on Dashboard (main page) and autoPlay is enabled
   useEffect(() => {
     const playMusic = () => {
-      if (audioRef.current && !isPlaying) {
+      if (audioRef.current && !isPlaying && autoPlay && location.pathname === '/') {
         audioRef.current.volume = volume;
         audioRef.current.play().catch(() => {
           // Autoplay blocked by browser, do nothing
@@ -111,9 +115,11 @@ const MusicPlayer = () => {
         setIsPlaying(true);
       }
     };
-    const timeout = setTimeout(playMusic, 3000);
+    
+    // Delay to ensure page is fully loaded
+    const timeout = setTimeout(playMusic, 2000);
     return () => clearTimeout(timeout);
-  }, [location, volume]);
+  }, [location.pathname, autoPlay, volume]);
 
   // Update volume when it changes
   useEffect(() => {

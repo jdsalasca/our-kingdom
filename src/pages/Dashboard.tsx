@@ -128,6 +128,16 @@ const Dashboard = () => {
           >
             {t('Welcome to our magical pixel world together! 💕')}
           </motion.p>
+          {/* Game References */}
+          <motion.div 
+            className="flex justify-center items-center gap-4 mt-4"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            <span className="text-sm md:text-base text-blue-200">🎮 Undertale</span>
+            <span className="text-sm md:text-base text-green-200">⛏️ Terraria</span>
+            <span className="text-sm md:text-base text-pink-200">💕 Together</span>
+          </motion.div>
         </motion.div>
 
         {/* Character Sprites */}
@@ -207,10 +217,11 @@ const Dashboard = () => {
           whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.3)" }}
         >
           <span className='text-4xl mb-2'>💌</span>
-          <h3 className='pixel-title text-lg md:text-xl mb-3 md:mb-4'>Carta Especial</h3>
-          <p className='pixel-text mb-4 md:mb-6 text-sm md:text-base'>Haz clic para leer una carta especial escrita solo para ti.</p>
+          <h3 className='pixel-title text-lg md:text-xl mb-3 md:mb-4'>{t('Special Letter')}</h3>
+          <p className='pixel-text mb-4 md:mb-6 text-sm md:text-base'>{t('Click to read a special letter written just for you.')}</p>
         </motion.div>
       </div>
+      
       {/* Special Card Modal */}
       {showSpecialCard && (
         <div className='fixed inset-0 bg-black/70 flex items-center justify-center z-50'>
@@ -232,9 +243,18 @@ const Dashboard = () => {
                 <rect x="24" y="16" width="16" height="16" fill="#e91e63" stroke="#000" strokeWidth="4"/>
               </svg>
             </div>
-            <h2 className='pixel-title text-2xl mb-4'>Carta Especial</h2>
-            <p className='pixel-text text-lg mb-4'>Este es un mensaje de ejemplo. ¡Puedes editar este mensaje para escribirle algo especial a tu persona favorita! 💖</p>
-            <span className='text-4xl'>💖👑</span>
+            <h2 className='pixel-title text-2xl mb-4'>{t('Special Letter')}</h2>
+            <div className='pixel-text text-lg mb-4 space-y-3'>
+              <p>Mi amor, cada día que paso contigo es como una nueva aventura en nuestro propio reino de píxeles.</p>
+              <p>Como en Undertale, cada decisión que tomamos juntos nos acerca más, y como en Terraria, construimos nuestro mundo perfecto ladrillo a ladrillo.</p>
+              <p>Eres mi compañera de aventuras, mi mejor amiga, y el amor de mi vida. Te amo infinitamente. 💕</p>
+            </div>
+            <div className="flex justify-center items-center gap-4 text-2xl">
+              <span>💖</span>
+              <span>👑</span>
+              <span>🎮</span>
+              <span>⛏️</span>
+            </div>
           </div>
         </div>
       )}

@@ -71,12 +71,26 @@ const OurPlay = () => {
       description: t('Test how well we know each other!'),
       color: 'from-pixel-red to-pixel-pink',
     },
+    {
+      id: 'undertale',
+      name: 'Undertale Adventure',
+      emoji: '💙',
+      description: 'Explore our friendship and love through Undertale themes!',
+      color: 'from-pixel-blue to-pixel-purple',
+    },
+    {
+      id: 'terraria',
+      name: 'Terraria Build',
+      emoji: '⛏️',
+      description: 'Build our perfect world together, block by block!',
+      color: 'from-pixel-green to-pixel-brown',
+    },
   ];
 
   // Initialize Memory Game
   useEffect(() => {
     if (currentGame === 'memory') {
-      const emojis = ['💕', '🌟', '🎮', '🏰', '🌸', '⭐', '🎵', '💎'];
+      const emojis = ['💕', '🌟', '🎮', '🏰', '🌸', '⭐', '🎵', '💎', '💙', '⛏️', '🎯', '🏆'];
       const cards = [...emojis, ...emojis].map((emoji, index) => ({
         id: index,
         emoji,
@@ -248,6 +262,78 @@ const OurPlay = () => {
     </motion.div>
   );
 
+  const renderUndertaleGame = () => (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="pixel-card bg-gradient-to-br from-pixel-blue to-pixel-purple max-w-2xl mx-auto"
+    >
+      <div className="text-center">
+        <h2 className="pixel-title text-2xl mb-6">Undertale Adventure</h2>
+        <div className="text-6xl mb-4">💙</div>
+        <p className="pixel-text mb-6">
+          En Undertale, cada decisión importa. Juntos hemos elegido el camino del amor y la amistad.
+        </p>
+        <div className="space-y-4 mb-6">
+          <div className="flex items-center justify-between p-3 bg-white/20 rounded">
+            <span className="pixel-text">❤️ LOVE</span>
+            <span className="pixel-text text-pink-300">∞</span>
+          </div>
+          <div className="flex items-center justify-between p-3 bg-white/20 rounded">
+            <span className="pixel-text">💙 FRIENDSHIP</span>
+            <span className="pixel-text text-blue-300">∞</span>
+          </div>
+          <div className="flex items-center justify-between p-3 bg-white/20 rounded">
+            <span className="pixel-text">🌟 DETERMINATION</span>
+            <span className="pixel-text text-yellow-300">∞</span>
+          </div>
+        </div>
+        <motion.button
+          onClick={() => setCurrentGame(null)}
+          className="pixel-button bg-pixel-purple hover:bg-pixel-pink"
+        >
+          {t('Back to Games')}
+        </motion.button>
+      </div>
+    </motion.div>
+  );
+
+  const renderTerrariaGame = () => (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="pixel-card bg-gradient-to-br from-pixel-green to-pixel-brown max-w-2xl mx-auto"
+    >
+      <div className="text-center">
+        <h2 className="pixel-title text-2xl mb-6">Terraria Build</h2>
+        <div className="text-6xl mb-4">⛏️</div>
+        <p className="pixel-text mb-6">
+          Como en Terraria, construimos nuestro mundo perfecto juntos, ladrillo a ladrillo.
+        </p>
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="text-center p-3 bg-white/20 rounded">
+            <div className="text-2xl mb-2">🏠</div>
+            <div className="pixel-text text-sm">Nuestro Hogar</div>
+          </div>
+          <div className="text-center p-3 bg-white/20 rounded">
+            <div className="text-2xl mb-2">💕</div>
+            <div className="pixel-text text-sm">Nuestro Amor</div>
+          </div>
+          <div className="text-center p-3 bg-white/20 rounded">
+            <div className="text-2xl mb-2">👑</div>
+            <div className="pixel-text text-sm">Nuestro Reino</div>
+          </div>
+        </div>
+        <motion.button
+          onClick={() => setCurrentGame(null)}
+          className="pixel-button bg-pixel-green hover:bg-pixel-yellow"
+        >
+          {t('Back to Games')}
+        </motion.button>
+      </div>
+    </motion.div>
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -279,7 +365,7 @@ const OurPlay = () => {
 
       {/* Games Grid */}
       {!currentGame && (
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8 md:mb-12 px-4'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8 md:mb-12 px-4'>
           {games.map((game, index) => (
             <motion.div
               key={game.id}
@@ -310,7 +396,9 @@ const OurPlay = () => {
       <AnimatePresence mode="wait">
         {currentGame === 'memory' && renderMemoryGame()}
         {currentGame === 'quiz' && renderQuizGame()}
-        {currentGame && currentGame !== 'memory' && currentGame !== 'quiz' && (
+        {currentGame === 'undertale' && renderUndertaleGame()}
+        {currentGame === 'terraria' && renderTerrariaGame()}
+        {currentGame && !['memory', 'quiz', 'undertale', 'terraria'].includes(currentGame) && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}

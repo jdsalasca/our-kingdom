@@ -15,15 +15,15 @@ describe('App Components', () => {
   test('LanguageSwitcher renders correctly', () => {
     renderWithI18n(<LanguageSwitcher />);
     
-    expect(screen.getByText('EN')).toBeInTheDocument();
-    expect(screen.getByText('ES')).toBeInTheDocument();
+    expect(screen.getByLabelText('Switch to English')).toBeInTheDocument();
+    expect(screen.getByLabelText('Cambiar a Español')).toBeInTheDocument();
   });
 
   test('LanguageSwitcher has proper styling', () => {
     renderWithI18n(<LanguageSwitcher />);
     
-    const enButton = screen.getByText('EN');
-    const esButton = screen.getByText('ES');
+    const enButton = screen.getByLabelText('Switch to English');
+    const esButton = screen.getByLabelText('Cambiar a Español');
     
     expect(enButton).toHaveClass('language-button');
     expect(esButton).toHaveClass('language-button');
@@ -32,7 +32,7 @@ describe('App Components', () => {
   test('LanguageSwitcher shows active state', () => {
     renderWithI18n(<LanguageSwitcher />);
     
-    const enButton = screen.getByText('EN');
+    const enButton = screen.getByLabelText('Switch to English');
     expect(enButton).toHaveClass('active');
   });
 

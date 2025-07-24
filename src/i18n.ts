@@ -97,6 +97,9 @@ const resources = {
       // Navigation
       'Dashboard': 'Dashboard',
       'Two Roads': 'Two Roads',
+      // Special Card
+      'Special Letter': 'Special Letter',
+      'Click to read a special letter written just for you.': 'Click to read a special letter written just for you.',
       // Add more keys as needed
     },
   },
@@ -194,6 +197,9 @@ const resources = {
       // Navigation
       'Dashboard': 'Inicio',
       'Two Roads': 'Dos Caminos',
+      // Special Card
+      'Special Letter': 'Carta Especial',
+      'Click to read a special letter written just for you.': 'Haz clic para leer una carta especial escrita solo para ti.',
       // Add more keys as needed
     },
   },

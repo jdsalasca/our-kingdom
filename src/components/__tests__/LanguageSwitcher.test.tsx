@@ -19,15 +19,15 @@ describe('LanguageSwitcher', () => {
   test('renders language buttons', () => {
     renderWithI18n(<LanguageSwitcher />);
     
-    expect(screen.getByText('EN')).toBeInTheDocument();
-    expect(screen.getByText('ES')).toBeInTheDocument();
+    expect(screen.getByLabelText('Switch to English')).toBeInTheDocument();
+    expect(screen.getByLabelText('Cambiar a Español')).toBeInTheDocument();
   });
 
   test('shows active state for current language', () => {
     renderWithI18n(<LanguageSwitcher />);
     
-    const enButton = screen.getByText('EN');
-    const esButton = screen.getByText('ES');
+    const enButton = screen.getByLabelText('Switch to English');
+    const esButton = screen.getByLabelText('Cambiar a Español');
     
     expect(enButton).toHaveClass('active');
     expect(esButton).toHaveClass('inactive');
@@ -36,8 +36,8 @@ describe('LanguageSwitcher', () => {
   test('buttons are clickable', () => {
     renderWithI18n(<LanguageSwitcher />);
     
-    const enButton = screen.getByText('EN');
-    const esButton = screen.getByText('ES');
+    const enButton = screen.getByLabelText('Switch to English');
+    const esButton = screen.getByLabelText('Cambiar a Español');
     
     expect(enButton).not.toBeDisabled();
     expect(esButton).not.toBeDisabled();
@@ -53,8 +53,8 @@ describe('LanguageSwitcher', () => {
   test('buttons have correct styling classes', () => {
     renderWithI18n(<LanguageSwitcher />);
     
-    const enButton = screen.getByText('EN');
-    const esButton = screen.getByText('ES');
+    const enButton = screen.getByLabelText('Switch to English');
+    const esButton = screen.getByLabelText('Cambiar a Español');
     
     expect(enButton).toHaveClass('language-button');
     expect(esButton).toHaveClass('language-button');
