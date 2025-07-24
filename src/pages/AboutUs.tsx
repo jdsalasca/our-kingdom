@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AboutUs = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const milestones = [
     {
       date: t('First Meeting'),
@@ -55,7 +57,7 @@ const AboutUs = () => {
         <div className='flex flex-col items-center justify-center mb-6'>
           <div className='flex items-center gap-2 bg-pixel-yellow text-pixel-purple px-6 py-2 rounded-xl shadow-lg border-4 border-pixel-purple font-pixel text-xl md:text-2xl'>
             <span role="img" aria-label="Pixel Heart" style={{ fontSize: '2rem' }}>❤️‍🔥</span>
-            <span>{daysTogether} días juntos</span>
+            <span>{daysTogether} {t('days together')}</span>
             <span role="img" aria-label="Pixel Heart" style={{ fontSize: '2rem' }}>❤️‍🔥</span>
           </div>
         </div>
@@ -168,6 +170,26 @@ const AboutUs = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* Back Button */}
+      <motion.div 
+        className="text-center mt-12"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.0 }}
+      >
+        <motion.button
+          onClick={() => navigate('/')}
+          className="pixel-button px-8 py-4 text-lg"
+          style={{
+            background: 'linear-gradient(135deg, #4a7c59 0%, #f4d03f 100%)'
+          }}
+          whileHover={{ scale: 1.05, rotate: 2 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          ← {t('Back to Our Kingdom')}
+        </motion.button>
+      </motion.div>
     </motion.div>
   );
 };

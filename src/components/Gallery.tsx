@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface GalleryImage {
   id: string;
@@ -9,6 +10,7 @@ interface GalleryImage {
 }
 
 const Gallery = () => {
+  const { t } = useTranslation();
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
 
   // Gallery images from public/images/gallery
@@ -62,7 +64,7 @@ const Gallery = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          📸 Our Gallery
+          📸 {t('Our Memories')}
         </motion.h1>
         <motion.p 
           className="pixel-text text-xl mt-2 max-w-2xl mx-auto"
@@ -71,7 +73,7 @@ const Gallery = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Capturing our beautiful moments together in pixel-art style
+          {t('Capturing our beautiful moments together in pixel-art style')}
         </motion.p>
       </div>
 
@@ -113,7 +115,7 @@ const Gallery = () => {
                 }}>
                   <div className="absolute bottom-4 left-4 right-4">
                     <h3 className="pixel-title text-white text-lg">{image.title}</h3>
-                    <p className="pixel-text text-white/80 text-sm">Click to view</p>
+                    <p className="pixel-text text-white/80 text-sm">{t('Click to view')}</p>
                   </div>
                 </div>
 
@@ -174,7 +176,7 @@ const Gallery = () => {
                 {/* Image Info */}
                 <div className="mt-4 text-center">
                   <h3 className="pixel-title text-white text-2xl mb-2">{selectedImage.title}</h3>
-                  <p className="pixel-text text-white/80">Our beautiful memories together</p>
+                  <p className="pixel-text text-white/80">{t('Our beautiful memories together')}</p>
                 </div>
               </div>
             </motion.div>
@@ -198,7 +200,7 @@ const Gallery = () => {
           whileHover={{ scale: 1.05, rotate: 2 }}
           whileTap={{ scale: 0.95 }}
         >
-          ← Back to Our Kingdom
+          {t('← Back to Our Kingdom')}
         </motion.button>
       </motion.div>
     </div>

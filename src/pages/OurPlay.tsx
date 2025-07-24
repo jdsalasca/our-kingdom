@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 interface MemoryCard {
   id: number;
@@ -17,6 +18,7 @@ interface QuizQuestion {
 
 const OurPlay = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   const [memoryCards, setMemoryCards] = useState<MemoryCard[]>([]);
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
@@ -272,7 +274,7 @@ const OurPlay = () => {
         <h2 className="pixel-title text-2xl mb-6">Undertale Adventure</h2>
         <div className="text-6xl mb-4">💙</div>
         <p className="pixel-text mb-6">
-          En Undertale, cada decisión importa. Juntos hemos elegido el camino del amor y la amistad.
+          {t('En Undertale, cada decisión importa. Juntos hemos elegido el camino del amor y la amistad.')}
         </p>
         <div className="space-y-4 mb-6">
           <div className="flex items-center justify-between p-3 bg-white/20 rounded">
@@ -308,20 +310,20 @@ const OurPlay = () => {
         <h2 className="pixel-title text-2xl mb-6">Terraria Build</h2>
         <div className="text-6xl mb-4">⛏️</div>
         <p className="pixel-text mb-6">
-          Como en Terraria, construimos nuestro mundo perfecto juntos, ladrillo a ladrillo.
+          {t('Como en Terraria, construimos nuestro mundo perfecto juntos, ladrillo a ladrillo.')}
         </p>
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="text-center p-3 bg-white/20 rounded">
             <div className="text-2xl mb-2">🏠</div>
-            <div className="pixel-text text-sm">Nuestro Hogar</div>
+            <div className="pixel-text text-sm">{t('Nuestro Hogar')}</div>
           </div>
           <div className="text-center p-3 bg-white/20 rounded">
             <div className="text-2xl mb-2">💕</div>
-            <div className="pixel-text text-sm">Nuestro Amor</div>
+            <div className="pixel-text text-sm">{t('Nuestro Amor')}</div>
           </div>
           <div className="text-center p-3 bg-white/20 rounded">
             <div className="text-2xl mb-2">👑</div>
-            <div className="pixel-text text-sm">Nuestro Reino</div>
+            <div className="pixel-text text-sm">{t('Nuestro Reino')}</div>
           </div>
         </div>
         <motion.button
@@ -433,6 +435,28 @@ const OurPlay = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Back Button */}
+      {!currentGame && (
+        <motion.div 
+          className="text-center mt-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+        >
+          <motion.button
+            onClick={() => navigate('/')}
+            className="pixel-button px-8 py-4 text-lg"
+            style={{
+              background: 'linear-gradient(135deg, #4a7c59 0%, #f4d03f 100%)'
+            }}
+            whileHover={{ scale: 1.05, rotate: 2 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            ← {t('Back to Our Kingdom')}
+          </motion.button>
+        </motion.div>
+      )}
 
       {/* Enhanced Floating Game Elements */}
       <div className='fixed inset-0 pointer-events-none'>

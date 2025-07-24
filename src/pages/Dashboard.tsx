@@ -11,11 +11,14 @@ import {
   Castle,
   FloatingElements,
 } from '../components/Sprites';
+import LoveLetter from '../components/LoveLetter';
+import SurpriseFeature from '../components/SurpriseFeature';
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [showSpecialCard, setShowSpecialCard] = useState(false);
+  const [showSurprise, setShowSurprise] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
@@ -135,7 +138,7 @@ const Dashboard = () => {
         </div>
         <motion.div className="inline-block px-6 py-4 rounded-xl bg-black/60 backdrop-blur-md shadow-2xl mb-4 md:mb-6 relative z-10">
           <motion.h1 
-            className='pixel-title text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-2 text-yellow-300 drop-shadow-xl'
+            className='pixel-title text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-2 text-yellow-300 drop-shadow-xl cursor-pointer'
             animate={reducedMotion ? {} : { 
               textShadow: [
                 "0 0 20px rgba(255,255,255,0.5)",
@@ -144,6 +147,16 @@ const Dashboard = () => {
               ]
             }}
             transition={reducedMotion ? {} : { duration: 3, repeat: Infinity }}
+            onClick={() => setShowSurprise(true)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setShowSurprise(true);
+              }
+            }}
+            aria-label="Click for a special surprise"
           >
             👑 {t('Our Happy Kingdom')} 👑
           </motion.h1>
@@ -152,7 +165,7 @@ const Dashboard = () => {
             animate={reducedMotion ? {} : { opacity: [0.7, 1, 0.7] }}
             transition={reducedMotion ? {} : { duration: 2, repeat: Infinity }}
           >
-            {getGreeting()}, my love! Welcome to our magical pixel world together! 💕
+            {t(getGreeting())}, {t('my love! Welcome to our magical pixel world together! 💕')}
           </motion.p>
           
           {/* Emotional Support Message */}
@@ -282,47 +295,17 @@ const Dashboard = () => {
         </motion.div>
       </div>
       
-      {/* Special Card Modal with Enhanced Emotional Support */}
-      {showSpecialCard && (
-        <div className='fixed inset-0 bg-black/70 flex items-center justify-center z-50' role="dialog" aria-modal="true">
-          <div className='pixel-card bg-gradient-to-br from-pixel-yellow to-pixel-pink max-w-lg mx-auto text-center relative flex flex-col items-center'>
-            <button 
-              className='absolute top-2 right-2 pixel-button flex items-center justify-center p-2' 
-              onClick={() => setShowSpecialCard(false)} 
-              aria-label='Close message'
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="2" width="16" height="16" fill="#fff" stroke="#000" strokeWidth="2"/>
-                <rect x="5" y="5" width="10" height="2" fill="#e91e63" transform="rotate(45 10 10)" />
-                <rect x="5" y="5" width="10" height="2" fill="#e91e63" transform="rotate(-45 10 10)" />
-              </svg>
-            </button>
-            
-            <div className='my-4'>
-              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="16" y="24" width="32" height="32" fill="#e91e63" stroke="#000" strokeWidth="4"/>
-                <rect x="8" y="32" width="16" height="16" fill="#e91e63" stroke="#000" strokeWidth="4"/>
-                <rect x="40" y="32" width="16" height="16" fill="#e91e63" stroke="#000" strokeWidth="4"/>
-                <rect x="24" y="16" width="16" height="16" fill="#e91e63" stroke="#000" strokeWidth="4"/>
-              </svg>
-            </div>
-            
-            <h2 className='pixel-title text-2xl mb-4'>{t('Special Letter')}</h2>
-            <div className='pixel-text text-lg mb-4 space-y-3'>
-              <p>Mi amor, cada día que paso contigo es como una nueva aventura en nuestro propio reino de píxeles.</p>
-              <p>Como en Undertale, cada decisión que tomamos juntos nos acerca más, y como en Terraria, construimos nuestro mundo perfecto ladrillo a ladrillo.</p>
-              <p>En estos momentos difíciles, quiero que sepas que eres increíblemente fuerte. Tu amor y tu luz iluminan mi mundo cada día.</p>
-              <p>Juntos somos invencibles. Te amo infinitamente y estoy aquí para ti, siempre. 💕</p>
-            </div>
-            <div className="flex justify-center items-center gap-4 text-2xl">
-              <span>💖</span>
-              <span>👑</span>
-              <span>🎮</span>
-              <span>⛏️</span>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Special Love Letter */}
+      <LoveLetter 
+        isOpen={showSpecialCard} 
+        onClose={() => setShowSpecialCard(false)} 
+      />
+      
+      {/* Surprise Feature */}
+      <SurpriseFeature 
+        isActive={showSurprise} 
+        onClose={() => setShowSurprise(false)} 
+      />
 
       {/* Enhanced Decorative Elements */}
       <div className='mt-8 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 px-4'>

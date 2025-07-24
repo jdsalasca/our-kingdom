@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const TwoRoads = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -67,6 +69,26 @@ const TwoRoads = () => {
             {t('Here, in this magical intersection, our separate journeys became one beautiful adventure together. Every step we take now, we take hand in hand, building our own happy kingdom.')}
           </p>
         </div>
+      </motion.div>
+
+      {/* Back Button */}
+      <motion.div 
+        className="text-center mt-12"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8 }}
+      >
+        <motion.button
+          onClick={() => navigate('/')}
+          className="pixel-button px-8 py-4 text-lg"
+          style={{
+            background: 'linear-gradient(135deg, #4a7c59 0%, #f4d03f 100%)'
+          }}
+          whileHover={{ scale: 1.05, rotate: 2 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          ← {t('Back to Our Kingdom')}
+        </motion.button>
       </motion.div>
 
       {/* Floating Elements */}

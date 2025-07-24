@@ -9,6 +9,7 @@ import Gallery from './components/Gallery';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import MusicPlayer from './components/MusicPlayer';
+import EmotionalSupport from './components/EmotionalSupport';
 import { useState, useEffect } from 'react';
 
 function App() {
@@ -218,6 +219,9 @@ function App() {
 
         {/* Music Player */}
         <MusicPlayer />
+        
+        {/* Emotional Support */}
+        <EmotionalSupport />
       </div>
     </Router>
   );
