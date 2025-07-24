@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 
@@ -18,11 +18,25 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.3); // Lower volume for background music
+  const [volume, setVolume] = useState(0.3);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const location = useLocation();
 
-  // Dynamic song list - automatically includes all songs from the music folder
+  // Check for reduced motion preference
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mediaQuery.matches);
+    
+    const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  // Dynamic song list with emotional support messages
   const songs: Song[] = [
     {
       id: '1',
@@ -56,70 +70,85 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
 
   const currentSong = songs[currentSongIndex];
 
-  const togglePlay = () => {
+  // Enhanced error handling
+  const handleAudioError = useCallback((error: string) => {
+    setError(error);
+    setIsLoading(false);
+    setIsPlaying(false);
+    console.warn('Audio error:', error);
+  }, []);
+
+  // Safe audio play function
+  const safePlay = useCallback(async () => {
+    if (!audioRef.current) return false;
+    
+    try {
+      setIsLoading(true);
+      setError(null);
+      await audioRef.current.play();
+      setIsPlaying(true);
+      setIsLoading(false);
+      return true;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to play audio';
+      handleAudioError(errorMessage);
+      return false;
+    }
+  }, [handleAudioError]);
+
+  const togglePlay = useCallback(async () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
-        audioRef.current.play().catch(() => {
-          // Autoplay blocked by browser, do nothing
-        });
-        setIsPlaying(true);
+        await safePlay();
       }
     }
-  };
+  }, [isPlaying, safePlay]);
 
-  const nextSong = () => {
+  const nextSong = useCallback(() => {
     const nextIndex = (currentSongIndex + 1) % songs.length;
     setCurrentSongIndex(nextIndex);
-    // Don't reset isPlaying state - let the audio element handle it
+    setError(null);
+    
     if (audioRef.current) {
       audioRef.current.load();
-      // If it was playing before, continue playing
       if (isPlaying) {
-        audioRef.current.play().catch(() => {
-          // Autoplay blocked by browser, do nothing
-        });
+        safePlay();
       }
     }
-  };
+  }, [currentSongIndex, songs.length, isPlaying, safePlay]);
 
-  const prevSong = () => {
+  const prevSong = useCallback(() => {
     const prevIndex = currentSongIndex === 0 ? songs.length - 1 : currentSongIndex - 1;
     setCurrentSongIndex(prevIndex);
-    // Don't reset isPlaying state - let the audio element handle it
+    setError(null);
+    
     if (audioRef.current) {
       audioRef.current.load();
-      // If it was playing before, continue playing
       if (isPlaying) {
-        audioRef.current.play().catch(() => {
-          // Autoplay blocked by browser, do nothing
-        });
+        safePlay();
       }
     }
-  };
+  }, [currentSongIndex, songs.length, isPlaying, safePlay]);
 
-  const handleSongEnd = () => {
+  const handleSongEnd = useCallback(() => {
     nextSong();
-  };
+  }, [nextSong]);
 
   // Auto-play music when on Dashboard (main page) and autoPlay is enabled
   useEffect(() => {
-    const playMusic = () => {
+    const playMusic = async () => {
       if (audioRef.current && !isPlaying && autoPlay && location.pathname === '/') {
         audioRef.current.volume = volume;
-        audioRef.current.play().catch(() => {
-          // Autoplay blocked by browser, do nothing
-        });
-        setIsPlaying(true);
+        await safePlay();
       }
     };
     
-    // Delay to ensure page is fully loaded
     const timeout = setTimeout(playMusic, 2000);
     return () => clearTimeout(timeout);
-  }, [location.pathname, autoPlay, volume]);
+  }, [location.pathname, autoPlay, volume, isPlaying, safePlay]);
 
   // Update volume when it changes
   useEffect(() => {
@@ -128,46 +157,64 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     }
   }, [volume]);
 
-  // Ensure audio continues playing when component visibility changes
+  // Enhanced visibility change handling
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (audioRef.current && isPlaying && !document.hidden) {
-        // Resume playing when page becomes visible again
-        audioRef.current.play().catch(() => {
-          // Autoplay blocked by browser, do nothing
-        });
+        safePlay();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [isPlaying]);
+  }, [isPlaying, safePlay]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+      }
+    };
+  }, []);
 
   return (
     <>
-      {/* Floating Music Button */}
+      {/* Floating Music Button with Accessibility */}
       <motion.div
         className="fixed bottom-6 right-6 z-50"
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+        transition={reducedMotion ? {} : { type: "spring", stiffness: 260, damping: 20 }}
       >
         <motion.button
           onClick={() => setIsOpen(!isOpen)}
           className="pixel-button bg-gradient-to-r from-pixel-purple to-pixel-pink text-white p-4 rounded-full shadow-lg hover:shadow-xl relative"
-          whileHover={{ scale: 1.1, rotate: 5 }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={reducedMotion ? {} : { scale: 1.1, rotate: 5 }}
+          whileTap={reducedMotion ? {} : { scale: 0.9 }}
+          aria-label={isOpen ? "Close music player" : "Open music player"}
+          aria-expanded={isOpen}
         >
-          <span className="text-2xl">🎵</span>
+          <span className="text-2xl" aria-hidden="true">🎵</span>
           {isPlaying && (
             <motion.span
               className="absolute -top-2 -right-2 text-pixel-yellow text-xl animate-pulse"
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: [0.7, 1, 0.7], scale: [1, 1.2, 1] }}
-              transition={{ duration: 1, repeat: Infinity }}
+              animate={reducedMotion ? {} : { opacity: [0.7, 1, 0.7], scale: [1, 1.2, 1] }}
+              transition={reducedMotion ? {} : { duration: 1, repeat: Infinity }}
             >
               <span role="img" aria-label="Music Playing">🎶</span>
             </motion.span>
+          )}
+          {isLoading && (
+            <motion.div
+              className="absolute -top-2 -right-2 text-pixel-blue text-xl"
+              animate={reducedMotion ? {} : { rotate: 360 }}
+              transition={reducedMotion ? {} : { duration: 1, repeat: Infinity, ease: "linear" }}
+            >
+              ⏳
+            </motion.div>
           )}
         </motion.button>
       </motion.div>
@@ -180,18 +227,31 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.8 }}
             className="fixed bottom-20 right-6 z-40"
+            role="dialog"
+            aria-label="Music player"
           >
             <div className="music-player-card p-6 max-w-sm">
+              {error && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                  <p className="pixel-text text-sm">
+                    💕 Don't worry! Music will be available soon. You can still enjoy our magical world together.
+                  </p>
+                </div>
+              )}
+              
               <div className="text-center mb-4">
-                <div className="text-4xl mb-2">{currentSong.emoji}</div>
+                <div className="text-4xl mb-2" aria-hidden="true">{currentSong.emoji}</div>
                 <h3 className="pixel-title text-lg">{currentSong.title}</h3>
                 <p className="pixel-text text-sm opacity-80">{currentSong.artist}</p>
               </div>
 
               {/* Volume Control */}
               <div className="mb-4">
-                <label className="pixel-text text-sm block mb-2">Volume</label>
+                <label className="pixel-text text-sm block mb-2" htmlFor="volume-control">
+                  Volume
+                </label>
                 <input
+                  id="volume-control"
                   type="range"
                   min="0"
                   max="1"
@@ -199,6 +259,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                   value={volume}
                   onChange={(e) => setVolume(parseFloat(e.target.value))}
                   className="w-full h-2 bg-pixel-purple rounded-lg appearance-none cursor-pointer"
+                  aria-label="Volume control"
                 />
               </div>
 
@@ -209,6 +270,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                 onEnded={handleSongEnd}
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
+                onError={() => handleAudioError('Failed to load audio file')}
                 preload="auto"
               />
 
@@ -217,8 +279,9 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                 <motion.button
                   onClick={prevSong}
                   className="music-button bg-pixel-purple hover:bg-pixel-pink"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={reducedMotion ? {} : { scale: 1.1 }}
+                  whileTap={reducedMotion ? {} : { scale: 0.9 }}
+                  aria-label="Previous song"
                 >
                   ⏮️
                 </motion.button>
@@ -226,17 +289,20 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                 <motion.button
                   onClick={togglePlay}
                   className="music-button bg-pixel-green hover:bg-pixel-yellow text-xl"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={reducedMotion ? {} : { scale: 1.1 }}
+                  whileTap={reducedMotion ? {} : { scale: 0.9 }}
+                  aria-label={isPlaying ? "Pause music" : "Play music"}
+                  disabled={isLoading}
                 >
-                  {isPlaying ? '⏸️' : '▶️'}
+                  {isLoading ? '⏳' : isPlaying ? '⏸️' : '▶️'}
                 </motion.button>
                 
                 <motion.button
                   onClick={nextSong}
                   className="music-button bg-pixel-purple hover:bg-pixel-pink"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={reducedMotion ? {} : { scale: 1.1 }}
+                  whileTap={reducedMotion ? {} : { scale: 0.9 }}
+                  aria-label="Next song"
                 >
                   ⏭️
                 </motion.button>
@@ -249,14 +315,11 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                     key={song.id}
                     onClick={() => {
                       setCurrentSongIndex(index);
-                      // Don't reset isPlaying state - let the audio element handle it
+                      setError(null);
                       if (audioRef.current) {
                         audioRef.current.load();
-                        // If it was playing before, continue playing
                         if (isPlaying) {
-                          audioRef.current.play().catch(() => {
-                            // Autoplay blocked by browser, do nothing
-                          });
+                          safePlay();
                         }
                       }
                     }}
@@ -265,12 +328,21 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                         ? 'bg-pixel-yellow text-pixel-purple'
                         : 'hover:bg-pixel-purple/20'
                     }`}
-                    whileHover={{ x: 5 }}
+                    whileHover={reducedMotion ? {} : { x: 5 }}
+                    aria-label={`Play ${song.title} by ${song.artist}`}
+                    aria-current={index === currentSongIndex ? "true" : "false"}
                   >
-                    <span className="mr-2">{song.emoji}</span>
+                    <span className="mr-2" aria-hidden="true">{song.emoji}</span>
                     {song.title}
                   </motion.button>
                 ))}
+              </div>
+
+              {/* Emotional Support Message */}
+              <div className="mt-4 p-3 bg-pink-100 border border-pink-300 rounded">
+                <p className="pixel-text text-xs text-pink-800">
+                  💕 Music has the power to heal hearts and bring us closer together. You are loved.
+                </p>
               </div>
             </div>
           </motion.div>
