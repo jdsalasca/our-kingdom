@@ -56,28 +56,43 @@ const MusicPlayer = () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
+        setIsPlaying(false);
       } else {
-        audioRef.current.play();
+        audioRef.current.play().catch(() => {
+          // Autoplay blocked by browser, do nothing
+        });
+        setIsPlaying(true);
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
   const nextSong = () => {
     const nextIndex = (currentSongIndex + 1) % songs.length;
     setCurrentSongIndex(nextIndex);
-    setIsPlaying(false);
+    // Don't reset isPlaying state - let the audio element handle it
     if (audioRef.current) {
       audioRef.current.load();
+      // If it was playing before, continue playing
+      if (isPlaying) {
+        audioRef.current.play().catch(() => {
+          // Autoplay blocked by browser, do nothing
+        });
+      }
     }
   };
 
   const prevSong = () => {
     const prevIndex = currentSongIndex === 0 ? songs.length - 1 : currentSongIndex - 1;
     setCurrentSongIndex(prevIndex);
-    setIsPlaying(false);
+    // Don't reset isPlaying state - let the audio element handle it
     if (audioRef.current) {
       audioRef.current.load();
+      // If it was playing before, continue playing
+      if (isPlaying) {
+        audioRef.current.play().catch(() => {
+          // Autoplay blocked by browser, do nothing
+        });
+      }
     }
   };
 
@@ -106,6 +121,21 @@ const MusicPlayer = () => {
       audioRef.current.volume = volume;
     }
   }, [volume]);
+
+  // Ensure audio continues playing when component visibility changes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (audioRef.current && isPlaying && !document.hidden) {
+        // Resume playing when page becomes visible again
+        audioRef.current.play().catch(() => {
+          // Autoplay blocked by browser, do nothing
+        });
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isPlaying]);
 
   return (
     <>
@@ -166,13 +196,14 @@ const MusicPlayer = () => {
                 />
               </div>
 
-              {/* Audio Element */}
+              {/* Audio Element - Always present, never unmounted */}
               <audio
                 ref={audioRef}
                 src={currentSong.file}
                 onEnded={handleSongEnd}
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
+                preload="auto"
               />
 
               {/* Controls */}
@@ -212,9 +243,15 @@ const MusicPlayer = () => {
                     key={song.id}
                     onClick={() => {
                       setCurrentSongIndex(index);
-                      setIsPlaying(false);
+                      // Don't reset isPlaying state - let the audio element handle it
                       if (audioRef.current) {
                         audioRef.current.load();
+                        // If it was playing before, continue playing
+                        if (isPlaying) {
+                          audioRef.current.play().catch(() => {
+                            // Autoplay blocked by browser, do nothing
+                          });
+                        }
                       }
                     }}
                     className={`w-full text-left p-2 rounded pixel-text text-sm transition-colors ${

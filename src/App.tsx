@@ -15,11 +15,43 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-pixel-green via-pixel-blue to-pixel-purple bg-pixel-pattern relative">
+        {/* Enhanced Floating Hearts Background - Always behind all content */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+          {[...Array(25)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -30, 0],
+                opacity: [0.3, 0.8, 0.3],
+                scale: [1, 1.2, 1],
+                rotate: [0, 180, 360],
+              }}
+              transition={{
+                duration: 4 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 3,
+              }}
+            >
+              {i % 3 === 0 ? (
+                <Heart size={i % 2 === 0 ? "small" : "medium"} />
+              ) : i % 3 === 1 ? (
+                <Star />
+              ) : (
+                <Flower color={["pink", "yellow", "purple", "red"][i % 4] as "pink" | "yellow" | "purple" | "red"} />
+              )}
+            </motion.div>
+          ))}
+        </div>
         {/* Background Overlay for Contrast */}
-        <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
         {/* TAILWIND TEST BANNER */}
         <motion.div 
-          className="pixel-border bg-pixel-green text-white text-center py-2 pixel-title tracking-widest shadow-lg relative z-10"
+          className="pixel-border bg-pixel-green text-white text-center py-2 pixel-title tracking-widest shadow-lg relative z-20"
           animate={{ 
             boxShadow: [
               "0 4px 8px rgba(0,0,0,0.3)",
@@ -30,7 +62,6 @@ function App() {
           transition={{ duration: 2, repeat: Infinity }}
         >
         </motion.div>
-        
         {/* Enhanced Navigation */}
         <nav className="pixel-border bg-[#232336] backdrop-blur-md sticky top-0 z-30 shadow-2xl">
           <div className="max-w-6xl mx-auto px-4 py-4 md:py-5">
@@ -88,7 +119,7 @@ function App() {
         </nav>
 
         {/* Main Content */}
-        <main className="max-w-6xl mx-auto px-4 py-4 md:py-8">
+        <main className="max-w-6xl mx-auto px-4 py-4 md:py-8 relative z-20">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/two-roads" element={<TwoRoads />} />
@@ -98,41 +129,8 @@ function App() {
           </Routes>
         </main>
 
-        {/* Enhanced Floating Hearts Background */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          {[...Array(25)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [0, -30, 0],
-                opacity: [0.3, 0.8, 0.3],
-                scale: [1, 1.2, 1],
-                rotate: [0, 180, 360],
-              }}
-              transition={{
-                duration: 4 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 3,
-              }}
-            >
-              {i % 3 === 0 ? (
-                <Heart size={i % 2 === 0 ? "small" : "medium"} />
-              ) : i % 3 === 1 ? (
-                <Star />
-              ) : (
-                <Flower color={["pink", "yellow", "purple", "red"][i % 4] as "pink" | "yellow" | "purple" | "red"} />
-              )}
-            </motion.div>
-          ))}
-        </div>
-
         {/* Enhanced Footer */}
-        <footer className="pixel-border bg-white/80 backdrop-blur-sm mt-8 md:mt-12">
+        <footer className="pixel-border bg-white/80 backdrop-blur-sm mt-8 md:mt-12 relative z-20">
           <div className="max-w-6xl mx-auto px-4 py-4 md:py-6 text-center">
             <motion.p 
               className="pixel-text text-sm md:text-base"

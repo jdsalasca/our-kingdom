@@ -166,7 +166,7 @@ const Dashboard = () => {
             variants={itemVariants}
             className={`pixel-card bg-gradient-to-br ${card.color} cursor-pointer transition-all duration-300 ${card.glow} ${
               hoveredCard === card.id ? 'scale-105 shadow-2xl' : 'hover:scale-105'
-            }`}
+            } z-20`}
             onHoverStart={() => setHoveredCard(card.id)}
             onHoverEnd={() => setHoveredCard(null)}
             whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.3)" }}
@@ -177,7 +177,7 @@ const Dashboard = () => {
               if (card.id === 'about-us') navigate('/about-us');
             }}
           >
-            <div className='text-center p-4 md:p-6'>
+            <div className='text-center p-4 md:p-6 relative z-20'>
               <motion.div 
                 className='flex justify-center items-center mb-4'
                 animate={hoveredCard === card.id ? { scale: 1.2 } : { scale: 1 }}
@@ -192,7 +192,7 @@ const Dashboard = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className='pixel-button bg-pixel-purple hover:bg-pixel-pink text-sm md:text-base px-4 py-2'
+                className='pixel-button bg-pixel-purple hover:bg-pixel-pink text-sm md:text-base px-4 py-2 z-30 relative'
               >
                 {card.buttonText}
               </motion.button>
