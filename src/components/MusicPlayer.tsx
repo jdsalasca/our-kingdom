@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface Song {
   id: string;
@@ -15,15 +15,20 @@ interface MusicPlayerProps {
 }
 
 const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.3);
+  const [volume, setVolume] = useState(() => {
+    const savedVolume = localStorage.getItem('music-volume');
+    return savedVolume ? parseFloat(savedVolume) : 0.3;
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const location = useLocation();
 
   // Check for reduced motion preference
   useEffect(() => {
@@ -78,25 +83,40 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     console.warn('Audio error:', error);
   }, []);
 
-  // Safe audio play function
+  // Safe audio play function with user interaction check
   const safePlay = useCallback(async () => {
     if (!audioRef.current) return false;
     
     try {
       setIsLoading(true);
       setError(null);
-      await audioRef.current.play();
-      setIsPlaying(true);
+      
+      // Set volume before playing
+      audioRef.current.volume = volume;
+      
+      // Try to play
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        await playPromise;
+        setIsPlaying(true);
+        setIsLoading(false);
+        setHasAutoPlayed(true);
+        return true;
+      }
+      
       setIsLoading(false);
-      return true;
+      return false;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to play audio';
       handleAudioError(errorMessage);
       return false;
     }
-  }, [handleAudioError]);
+  }, [volume, handleAudioError]);
 
   const togglePlay = useCallback(async () => {
+    setUserInteracted(true);
+    
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
@@ -137,24 +157,28 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     nextSong();
   }, [nextSong]);
 
-  // Auto-play music when on Dashboard (main page) and autoPlay is enabled
+  // Auto-play music when autoPlay is enabled and not already played
   useEffect(() => {
     const playMusic = async () => {
-      if (audioRef.current && !isPlaying && autoPlay && location.pathname === '/') {
-        audioRef.current.volume = volume;
-        await safePlay();
+      if (audioRef.current && !isPlaying && autoPlay && !hasAutoPlayed && userInteracted) {
+        const success = await safePlay();
+        if (success) {
+          setHasAutoPlayed(true);
+        }
       }
     };
     
+    // Delay auto-play to ensure user interaction
     const timeout = setTimeout(playMusic, 2000);
     return () => clearTimeout(timeout);
-  }, [location.pathname, autoPlay, volume, isPlaying, safePlay]);
+  }, [autoPlay, isPlaying, safePlay, hasAutoPlayed, userInteracted]);
 
-  // Update volume when it changes
+  // Update volume when it changes and save to localStorage
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
     }
+    localStorage.setItem('music-volume', volume.toString());
   }, [volume]);
 
   // Enhanced visibility change handling
@@ -168,6 +192,24 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [isPlaying, safePlay]);
+
+  // Handle user interaction for autoplay
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setUserInteracted(true);
+    };
+
+    const events = ['click', 'touchstart', 'keydown'];
+    events.forEach(event => {
+      document.addEventListener(event, handleUserInteraction, { once: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, handleUserInteraction);
+      });
+    };
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -193,7 +235,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
           className="pixel-button bg-gradient-to-r from-pixel-purple to-pixel-pink text-white p-4 rounded-full shadow-lg hover:shadow-xl relative"
           whileHover={reducedMotion ? {} : { scale: 1.1, rotate: 5 }}
           whileTap={reducedMotion ? {} : { scale: 0.9 }}
-          aria-label={isOpen ? "Close music player" : "Open music player"}
+          aria-label={isOpen ? t('Close Music Player') : t('Open Music Player')}
           aria-expanded={isOpen}
         >
           <span className="text-2xl" aria-hidden="true">🎵</span>
@@ -228,13 +270,13 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
             exit={{ opacity: 0, y: 100, scale: 0.8 }}
             className="fixed bottom-20 right-6 z-40"
             role="dialog"
-            aria-label="Music player"
+            aria-label={t('Music Player')}
           >
             <div className="music-player-card p-6 max-w-sm">
               {error && (
                 <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                   <p className="pixel-text text-sm">
-                    💕 Don't worry! Music will be available soon. You can still enjoy our magical world together.
+                    💕 {t('Don\'t worry! Music will be available soon. You can still enjoy our magical world together.')}
                   </p>
                 </div>
               )}
@@ -248,7 +290,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
               {/* Volume Control */}
               <div className="mb-4">
                 <label className="pixel-text text-sm block mb-2" htmlFor="volume-control">
-                  Volume
+                  {t('Volume')}
                 </label>
                 <input
                   id="volume-control"
@@ -259,7 +301,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                   value={volume}
                   onChange={(e) => setVolume(parseFloat(e.target.value))}
                   className="w-full h-2 bg-pixel-purple rounded-lg appearance-none cursor-pointer"
-                  aria-label="Volume control"
+                  aria-label={t('Volume control')}
                 />
               </div>
 
@@ -281,7 +323,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                   className="music-button bg-pixel-purple hover:bg-pixel-pink"
                   whileHover={reducedMotion ? {} : { scale: 1.1 }}
                   whileTap={reducedMotion ? {} : { scale: 0.9 }}
-                  aria-label="Previous song"
+                  aria-label={t('Previous Song')}
                 >
                   ⏮️
                 </motion.button>
@@ -291,7 +333,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                   className="music-button bg-pixel-green hover:bg-pixel-yellow text-xl"
                   whileHover={reducedMotion ? {} : { scale: 1.1 }}
                   whileTap={reducedMotion ? {} : { scale: 0.9 }}
-                  aria-label={isPlaying ? "Pause music" : "Play music"}
+                  aria-label={isPlaying ? t('Pause Music') : t('Play Music')}
                   disabled={isLoading}
                 >
                   {isLoading ? '⏳' : isPlaying ? '⏸️' : '▶️'}
@@ -302,7 +344,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                   className="music-button bg-pixel-purple hover:bg-pixel-pink"
                   whileHover={reducedMotion ? {} : { scale: 1.1 }}
                   whileTap={reducedMotion ? {} : { scale: 0.9 }}
-                  aria-label="Next song"
+                  aria-label={t('Next Song')}
                 >
                   ⏭️
                 </motion.button>
@@ -329,7 +371,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                         : 'hover:bg-pixel-purple/20'
                     }`}
                     whileHover={reducedMotion ? {} : { x: 5 }}
-                    aria-label={`Play ${song.title} by ${song.artist}`}
+                    aria-label={`${t('Play Music')} ${song.title} by ${song.artist}`}
                     aria-current={index === currentSongIndex ? "true" : "false"}
                   >
                     <span className="mr-2" aria-hidden="true">{song.emoji}</span>
@@ -341,7 +383,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
               {/* Emotional Support Message */}
               <div className="mt-4 p-3 bg-pink-100 border border-pink-300 rounded">
                 <p className="pixel-text text-xs text-pink-800">
-                  💕 Music has the power to heal hearts and bring us closer together. You are loved.
+                  💕 {t('Music has the power to heal hearts and bring us closer together. You are loved.')}
                 </p>
               </div>
             </div>

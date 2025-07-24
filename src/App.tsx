@@ -10,12 +10,15 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import MusicPlayer from './components/MusicPlayer';
 import EmotionalSupport from './components/EmotionalSupport';
+import BirthdayPresentation from './components/BirthdayPresentation';
 import { useState, useEffect } from 'react';
 
 function App() {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [showBirthdayPresentation, setShowBirthdayPresentation] = useState(false);
+  const [presentationComplete, setPresentationComplete] = useState(false);
 
   // Check for reduced motion preference
   useEffect(() => {
@@ -28,11 +31,27 @@ function App() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
+  // Check if birthday presentation has been shown
+  useEffect(() => {
+    const hasShownPresentation = localStorage.getItem('initial_presentation_showed') === 'true';
+    if (!hasShownPresentation) {
+      setShowBirthdayPresentation(true);
+    } else {
+      setPresentationComplete(true);
+    }
+  }, []);
+
   // Simulate loading for better UX
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  // Handle birthday presentation completion
+  const handlePresentationComplete = () => {
+    setShowBirthdayPresentation(false);
+    setPresentationComplete(true);
+  };
 
   // Optimized floating elements - reduced from 25 to 12 for better performance
   const floatingElements = Array.from({ length: 12 }, (_, i) => ({
@@ -62,11 +81,16 @@ function App() {
             {t('Our Happy Kingdom')}
           </h1>
           <p className="pixel-text text-white">
-            Loading your magical world... 💕
+            {t('Loading your magical world... 💕')}
           </p>
         </motion.div>
       </div>
     );
+  }
+
+  // Show birthday presentation if not complete
+  if (showBirthdayPresentation) {
+    return <BirthdayPresentation onComplete={handlePresentationComplete} />;
   }
 
   return (
@@ -192,7 +216,7 @@ function App() {
               {t('Made with 💕 for our happy kingdom together')}
             </motion.p>
             <p className="pixel-text text-xs mt-2 opacity-80">
-              Remember: You are loved, you are strong, and you are never alone. 💕
+              {t('Remember: You are loved, you are strong, and you are never alone. 💕')}
             </p>
             <div className="flex justify-center items-center gap-4 mt-4">
               <motion.div
@@ -217,8 +241,8 @@ function App() {
           </div>
         </footer>
 
-        {/* Music Player */}
-        <MusicPlayer />
+        {/* Music Player with Auto-play */}
+        <MusicPlayer autoPlay={presentationComplete} />
         
         {/* Emotional Support */}
         <EmotionalSupport />

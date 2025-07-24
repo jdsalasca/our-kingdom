@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 interface GalleryImage {
   id: string;
@@ -159,6 +160,7 @@ const Gallery = () => {
                   minWidth: '44px',
                   minHeight: '44px'
                 }}
+                aria-label={t('Close')}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -191,17 +193,18 @@ const Gallery = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.8 }}
       >
-        <motion.button
-          onClick={() => window.history.back()}
-          className="pixel-button px-8 py-4 text-lg"
-          style={{
-            background: 'linear-gradient(135deg, #4a7c59 0%, #f4d03f 100%)'
-          }}
-          whileHover={{ scale: 1.05, rotate: 2 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          {t('← Back to Our Kingdom')}
-        </motion.button>
+        <Link to="/">
+          <motion.button
+            className="pixel-button px-8 py-4 text-lg"
+            style={{
+              background: 'linear-gradient(135deg, #4a7c59 0%, #f4d03f 100%)'
+            }}
+            whileHover={{ scale: 1.05, rotate: 2 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {t('← Back to Our Kingdom')}
+          </motion.button>
+        </Link>
       </motion.div>
     </div>
   );
