@@ -7,7 +7,6 @@ import OurPlay from './pages/OurPlay';
 import AboutUs from './pages/AboutUs';
 import Gallery from './components/Gallery';
 import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from './components/LanguageSwitcher';
 import MusicPlayer from './components/MusicPlayer';
 import EmotionalSupport from './components/EmotionalSupport';
 import BirthdayPresentation from './components/BirthdayPresentation';
@@ -19,6 +18,7 @@ function App() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [showBirthdayPresentation, setShowBirthdayPresentation] = useState(false);
   const [presentationComplete, setPresentationComplete] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
 
   // Check for reduced motion preference
   useEffect(() => {
@@ -39,6 +39,24 @@ function App() {
     } else {
       setPresentationComplete(true);
     }
+  }, []);
+
+  // Handle user interaction for autoplay
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setUserInteracted(true);
+    };
+
+    const events = ['click', 'touchstart', 'keydown'];
+    events.forEach(event => {
+      document.addEventListener(event, handleUserInteraction, { once: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, handleUserInteraction);
+      });
+    };
   }, []);
 
   // Simulate loading for better UX
@@ -152,37 +170,66 @@ function App() {
               </motion.div>
               
               <div className="flex flex-wrap gap-3 md:gap-6 justify-center items-center" role="menubar">
-                <Link to="/" className="pixel-button" role="menuitem" aria-label="Go to Dashboard">
+                <Link to="/" className="pixel-button" role="menuitem" aria-label="Go to Dashboard"
+                  onMouseEnter={() => {
+                    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+                    sound.volume = 0.3;
+                    sound.play().catch(console.warn);
+                  }}
+                >
                   <span className="flex items-center gap-2">
-                    <span className="text-base md:text-lg" aria-hidden="true">🏠</span>
+                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
                     <span className="hidden sm:inline">{t('Dashboard')}</span>
                   </span>
                 </Link>
-                <Link to="/two-roads" className="pixel-button" role="menuitem" aria-label="Explore our journey">
+                <Link to="/two-roads" className="pixel-button" role="menuitem" aria-label="Explore our journey"
+                  onMouseEnter={() => {
+                    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+                    sound.volume = 0.3;
+                    sound.play().catch(console.warn);
+                  }}
+                >
                   <span className="flex items-center gap-2">
-                    <span className="text-base md:text-lg" aria-hidden="true">🛤️</span>
+                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
                     <span className="hidden sm:inline">{t('Two Roads')}</span>
                   </span>
                 </Link>
-                <Link to="/our-play" className="pixel-button" role="menuitem" aria-label="Play games together">
+                <Link to="/our-play" className="pixel-button" role="menuitem" aria-label="Play games together"
+                  onMouseEnter={() => {
+                    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+                    sound.volume = 0.3;
+                    sound.play().catch(console.warn);
+                  }}
+                >
                   <span className="flex items-center gap-2">
-                    <span className="text-base md:text-lg" aria-hidden="true">🎮</span>
+                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
                     <span className="hidden sm:inline">{t('Our Play')}</span>
                   </span>
                 </Link>
-                <Link to="/gallery" className="pixel-button" role="menuitem" aria-label="View our memories">
+                <Link to="/gallery" className="pixel-button" role="menuitem" aria-label="View our memories"
+                  onMouseEnter={() => {
+                    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+                    sound.volume = 0.3;
+                    sound.play().catch(console.warn);
+                  }}
+                >
                   <span className="flex items-center gap-2">
-                    <span className="text-base md:text-lg" aria-hidden="true">📸</span>
+                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
                     <span className="hidden sm:inline">{t('Gallery')}</span>
                   </span>
                 </Link>
-                <Link to="/about-us" className="pixel-button" role="menuitem" aria-label="Learn about our story">
+                <Link to="/about-us" className="pixel-button" role="menuitem" aria-label="Learn about our story"
+                  onMouseEnter={() => {
+                    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+                    sound.volume = 0.3;
+                    sound.play().catch(console.warn);
+                  }}
+                >
                   <span className="flex items-center gap-2">
-                    <span className="text-base md:text-lg" aria-hidden="true">💕</span>
+                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
                     <span className="hidden sm:inline">{t('About Us')}</span>
                   </span>
                 </Link>
-                <LanguageSwitcher />
               </div>
             </div>
           </div>
@@ -242,7 +289,7 @@ function App() {
         </footer>
 
         {/* Music Player with Auto-play */}
-        <MusicPlayer autoPlay={presentationComplete} />
+        <MusicPlayer autoPlay={presentationComplete && userInteracted} />
         
         {/* Emotional Support */}
         <EmotionalSupport />

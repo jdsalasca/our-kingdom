@@ -27,7 +27,6 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
   const [error, setError] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
-  const [userInteracted, setUserInteracted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Check for reduced motion preference
@@ -45,27 +44,48 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
   const songs: Song[] = [
     {
       id: '1',
+      title: 'Once Upon a Time',
+      artist: 'Undertale',
+      file: '/music/undertale/once_upon_a_time.mp3',
+      emoji: '🎮'
+    },
+    {
+      id: '2',
+      title: 'Fallen Down',
+      artist: 'Undertale',
+      file: '/music/undertale/fallen_down.mp3',
+      emoji: '🍂'
+    },
+    {
+      id: '3',
+      title: 'Home',
+      artist: 'Undertale',
+      file: '/music/undertale/home.mp3',
+      emoji: '🏠'
+    },
+    {
+      id: '4',
       title: 'Die With A Smile',
       artist: 'Lady Gaga, Bruno Mars',
       file: '/music/Lady Gaga, Bruno Mars - Die With A Smile.mp3',
       emoji: '🎵'
     },
     {
-      id: '2',
+      id: '5',
       title: 'Treasure',
       artist: 'Bruno Mars',
       file: '/music/Treasure - Bruno Mars HQ (Audio).mp3',
       emoji: '💎'
     },
     {
-      id: '3',
+      id: '6',
       title: 'Corazón',
       artist: 'Auténticos Decadentes',
       file: '/music/Corazón -Autenticos decadentes.mp3',
       emoji: '❤️'
     },
     {
-      id: '4',
+      id: '7',
       title: 'Es Por Ti',
       artist: 'Juan',
       file: '/music/Es Por Ti - Juan.mp3',
@@ -115,8 +135,6 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
   }, [volume, handleAudioError]);
 
   const togglePlay = useCallback(async () => {
-    setUserInteracted(true);
-    
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
@@ -160,7 +178,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
   // Auto-play music when autoPlay is enabled and not already played
   useEffect(() => {
     const playMusic = async () => {
-      if (audioRef.current && !isPlaying && autoPlay && !hasAutoPlayed && userInteracted) {
+      if (audioRef.current && !isPlaying && autoPlay && !hasAutoPlayed) {
         const success = await safePlay();
         if (success) {
           setHasAutoPlayed(true);
@@ -168,10 +186,27 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
       }
     };
     
-    // Delay auto-play to ensure user interaction
-    const timeout = setTimeout(playMusic, 2000);
-    return () => clearTimeout(timeout);
-  }, [autoPlay, isPlaying, safePlay, hasAutoPlayed, userInteracted]);
+    // Try to play immediately, then retry after user interaction
+    playMusic();
+    
+    // Also try after any user interaction
+    const handleUserInteraction = () => {
+      if (!hasAutoPlayed && autoPlay) {
+        playMusic();
+      }
+    };
+
+    const events = ['click', 'touchstart', 'keydown'];
+    events.forEach(event => {
+      document.addEventListener(event, handleUserInteraction, { once: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, handleUserInteraction);
+      });
+    };
+  }, [autoPlay, isPlaying, safePlay, hasAutoPlayed]);
 
   // Update volume when it changes and save to localStorage
   useEffect(() => {
@@ -192,24 +227,6 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [isPlaying, safePlay]);
-
-  // Handle user interaction for autoplay
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      setUserInteracted(true);
-    };
-
-    const events = ['click', 'touchstart', 'keydown'];
-    events.forEach(event => {
-      document.addEventListener(event, handleUserInteraction, { once: true });
-    });
-
-    return () => {
-      events.forEach(event => {
-        document.removeEventListener(event, handleUserInteraction);
-      });
-    };
-  }, []);
 
   // Cleanup on unmount
   useEffect(() => {

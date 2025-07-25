@@ -1,266 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 
 const resources = {
-  en: {
-    translation: {
-      // Navigation
-      'Our Happy Kingdom': 'Our Happy Kingdom',
-      'Dashboard': 'Dashboard',
-      'Two Roads': 'Two Roads',
-      'Our Play': 'Our Play',
-      'Gallery': 'Gallery',
-      'About Us': 'About Us',
-      
-      // Dashboard
-      'Two Roads, One Destiny': 'Two Roads, One Destiny',
-      'Explore the paths that brought us together and the adventures that await us!': 'Explore the paths that brought us together and the adventures that await us!',
-      'Start Journey →': 'Start Journey →',
-      'Fun games and activities we can enjoy together in our pixel paradise!': 'Fun games and activities we can enjoy together in our pixel paradise!',
-      "Let's Play! →": "Let's Play! →",
-      'Beautiful memories captured in our pixel-art kingdom!': 'Beautiful memories captured in our pixel-art kingdom!',
-      'View Memories →': 'View Memories →',
-      'Learn more about our story and the love that built this kingdom!': 'Learn more about our story and the love that built this kingdom!',
-      'Our Story →': 'Our Story →',
-      
-      // Special Features
-      'Special Letter': 'Special Letter',
-      'Click to read a special letter written just for you.': 'Click to read a special letter written just for you.',
-      
-      // Emotional Support Messages
-      'You are loved': 'You are loved',
-      'You are strong': 'You are strong',
-      'You are never alone': 'You are never alone',
-      'Together we are invincible': 'Together we are invincible',
-      'Your love lights up my world': 'Your love lights up my world',
-      'I am here for you always': 'I am here for you always',
-      'Remember: You are stronger than you know, more loved than you can imagine, and never alone in this journey.': 'Remember: You are stronger than you know, more loved than you can imagine, and never alone in this journey.',
-      'Music has the power to heal hearts and bring us closer together. You are loved.': 'Music has the power to heal hearts and bring us closer together. You are loved.',
-      'Don\'t worry! Music will be available soon. You can still enjoy our magical world together.': 'Don\'t worry! Music will be available soon. You can still enjoy our magical world together.',
-      
-      // Games
-      'Memory Match': 'Memory Match',
-      'Love Quiz': 'Love Quiz',
-      'Undertale Adventure': 'Undertale Adventure',
-      'Terraria Build': 'Terraria Build',
-      'Find matching pairs of our special moments!': 'Find matching pairs of our special moments!',
-      'Test how well we know each other!': 'Test how well we know each other!',
-      'Explore our friendship and love through Undertale themes!': 'Explore our friendship and love through Undertale themes!',
-      'Build our perfect world together, block by block!': 'Build our perfect world together, block by block!',
-      
-      // Game Stats
-      'LOVE': 'LOVE',
-      'FRIENDSHIP': 'FRIENDSHIP',
-      'DETERMINATION': 'DETERMINATION',
-      'Nuestro Hogar': 'Our Home',
-      'Nuestro Amor': 'Our Love',
-      'Nuestro Reino': 'Our Kingdom',
-      
-      // Quiz
-      'Question': 'Question',
-      'of': 'of',
-      'Correct!': 'Correct!',
-      'Incorrect!': 'Incorrect!',
-      'Your Score:': 'Your Score:',
-      'Perfect! You know each other perfectly!': 'Perfect! You know each other perfectly!',
-      'Great! You know each other very well!': 'Great! You know each other very well!',
-      'Good! You know each other well!': 'Good! You know each other well!',
-      'Keep learning about each other!': 'Keep learning about each other!',
-      
-      // Gallery
-      'Our Memories': 'Our Memories',
-      'Click to view': 'Click to view',
-      'Close': 'Close',
-      'Previous': 'Previous',
-      'Next': 'Next',
-      
-      // About Us
-      'Our Story': 'Our Story',
-      'A moment that changed everything...': 'A moment that changed everything...',
-      'The day we met, our worlds collided in the most beautiful way. Like in our favorite games, every choice we made led us to this perfect moment together.': 'The day we met, our worlds collided in the most beautiful way. Like in our favorite games, every choice we made led us to this perfect moment together.',
-      'Our love story is like the best adventure game - full of challenges, growth, and endless possibilities. We\'ve built our own kingdom, pixel by pixel, with love as our foundation.': 'Our love story is like the best adventure game - full of challenges, growth, and endless possibilities. We\'ve built our own kingdom, pixel by pixel, with love as our foundation.',
-      'In every moment, whether playing Undertale or building in Terraria, we discover new ways to love and support each other. Our journey together is the greatest adventure of all.': 'In every moment, whether playing Undertale or building in Terraria, we discover new ways to love and support each other. Our journey together is the greatest adventure of all.',
-      'I promise to love you with all my heart, be your greatest support, your best friend, and your companion in all of life\'s adventures. Together, we can conquer anything and build the most beautiful kingdom.': 'I promise to love you with all my heart, be your greatest support, your best friend, and your companion in all of life\'s adventures. Together, we can conquer anything and build the most beautiful kingdom.',
-      
-      // Footer
-      'Made with 💕 for our happy kingdom together': 'Made with 💕 for our happy kingdom together',
-      'Remember: You are loved, you are strong, and you are never alone. 💕': 'Remember: You are loved, you are strong, and you are never alone. 💕',
-      
-      // Loading
-      'Loading your magical world... 💕': 'Loading your magical world... 💕',
-      
-      // Greetings
-      'Good morning': 'Good morning',
-      'Good afternoon': 'Good afternoon',
-      'Good evening': 'Good evening',
-      'my love! Welcome to our magical pixel world together! 💕': 'my love! Welcome to our magical pixel world together! 💕',
-      
-      // Missing translations found in components
-      'Our paths crossed and created something magical...': 'Our paths crossed and created something magical...',
-      'Your Road': 'Your Road',
-      'Your journey began with...': 'Your journey began with...',
-      'Your dreams and aspirations...': 'Your dreams and aspirations...',
-      'Your unique path in life...': 'Your unique path in life...',
-      'My Road': 'My Road',
-      'My journey began with...': 'My journey began with...',
-      'My dreams and aspirations...': 'My dreams and aspirations...',
-      'My unique path in life...': 'My unique path in life...',
-      'Where Our Roads Meet': 'Where Our Roads Meet',
-      'Here, in this magical intersection, our separate journeys became one beautiful adventure together. Every step we take now, we take hand in hand, building our own happy kingdom.': 'Here, in this magical intersection, our separate journeys became one beautiful adventure together. Every step we take now, we take hand in hand, building our own happy kingdom.',
-      
-      // Our Play translations
-      "Let's have fun together in our pixel paradise!": "Let's have fun together in our pixel paradise!",
-      'Love Puzzle': 'Love Puzzle',
-      'Solve puzzles together and unlock our memories!': 'Solve puzzles together and unlock our memories!',
-      'Our Adventure': 'Our Adventure',
-      'Go on a pixel adventure through our kingdom!': 'Go on a pixel adventure through our kingdom!',
-      'Score': 'Score',
-      'Back to Games': 'Back to Games',
-      'Quiz Complete!': 'Quiz Complete!',
-      'Play Again': 'Play Again',
-      'Start Game': 'Start Game',
-      'What is your favorite color?': 'What is your favorite color?',
-      'Pink': 'Pink',
-      'Blue': 'Blue',
-      'Purple': 'Purple',
-      'Green': 'Green',
-      'What is your favorite food?': 'What is your favorite food?',
-      'Pizza': 'Pizza',
-      'Sushi': 'Sushi',
-      'Tacos': 'Tacos',
-      'Pasta': 'Pasta',
-      'What is your dream vacation?': 'What is your dream vacation?',
-      'Beach': 'Beach',
-      'Mountains': 'Mountains',
-      'City': 'City',
-      'Forest': 'Forest',
-      
-      // Gallery translations
-      'Capturing our beautiful moments together in pixel-art style': 'Capturing our beautiful moments together in pixel-art style',
-      'Our beautiful memories together': 'Our beautiful memories together',
-      '← Back to Our Kingdom': '← Back to Our Kingdom',
-      
-      // About Us translations
-      'Our love story in pixels...': 'Our love story in pixels...',
-      'You': 'You',
-      'You are the most amazing person I\'ve ever met. Your smile lights up my world, your laugh is my favorite sound, and your love makes every day feel like a fairy tale. You bring out the best in me and make me want to be better every day.': 'You are the most amazing person I\'ve ever met. Your smile lights up my world, your laugh is my favorite sound, and your love makes every day feel like a fairy tale. You bring out the best in me and make me want to be better every day.',
-      'Me': 'Me',
-      'I promise to love you with all my heart, to be your biggest supporter, your best friend, and your partner in all of life\'s adventures. Together, we can conquer anything and build the most beautiful kingdom.': 'I promise to love you with all my heart, to be your biggest supporter, your best friend, and your partner in all of life\'s adventures. Together, we can conquer anything and build the most beautiful kingdom.',
-      'Our Journey': 'Our Journey',
-      'First Meeting': 'First Meeting',
-      'The moment our eyes first met...': 'The moment our eyes first met...',
-      'First Date': 'First Date',
-      'Our magical first date together...': 'Our magical first date together...',
-      'First Kiss': 'First Kiss',
-      'Moving In': 'Moving In',
-      'Building our home together...': 'Building our home together...',
-      'Future Dreams': 'Future Dreams',
-      'All the adventures yet to come...': 'All the adventures yet to come...',
-      'Our Love Stats': 'Our Love Stats',
-      'Infinite': 'Infinite',
-      'Love': 'Love',
-      'Endless': 'Endless',
-      'Adventures': 'Adventures',
-      'Countless': 'Countless',
-      'Laughs': 'Laughs',
-      'Forever': 'Forever',
-      'Together': 'Together',
-      'days together': 'days together',
-      
-      // Special letter translations (Spanish to English)
-      'Mi amor, cada día que paso contigo es como una nueva aventura en nuestro propio reino de píxeles.': 'My love, every day I spend with you is like a new adventure in our own pixel kingdom.',
-      'Como en Undertale, cada decisión que tomamos juntos nos acerca más, y como en Terraria, construimos nuestro mundo perfecto ladrillo a ladrillo.': 'Like in Undertale, every decision we make together brings us closer, and like in Terraria, we build our perfect world brick by brick.',
-      'En estos momentos difíciles, quiero que sepas que eres increíblemente fuerte. Tu amor y tu luz iluminan mi mundo cada día.': 'In these difficult times, I want you to know that you are incredibly strong. Your love and your light illuminate my world every day.',
-      'Juntos somos invencibles. Te amo infinitamente y estoy aquí para ti, siempre. 💕': 'Together we are invincible. I love you infinitely and I am here for you, always. 💕',
-      
-      // Undertale game translations (Spanish to English)
-      'En Undertale, cada decisión importa. Juntos hemos elegido el camino del amor y la amistad.': 'In Undertale, every decision matters. Together we have chosen the path of love and friendship.',
-      
-      // Terraria game translations (Spanish to English)
-      'Como en Terraria, construimos nuestro mundo perfecto juntos, ladrillo a ladrillo.': 'Like in Terraria, we build our perfect world together, brick by brick.',
-      
-      // Love Letter translations
-      'My Dearest Love': 'My Dearest Love',
-      'Our Adventure Together': 'Our Adventure Together',
-      'Your Strength': 'Your Strength',
-      'Forever Together': 'Forever Together',
-      
-      // Surprise Feature translations
-      'A Special Surprise': 'A Special Surprise',
-      'For the most amazing person in my life...': 'For the most amazing person in my life...',
-      'You Are Everything': 'You Are Everything',
-      'Every moment with you is a gift. You make my world complete.': 'Every moment with you is a gift. You make my world complete.',
-      'My Promise to You': 'My Promise to You',
-      'I promise to love you more each day, to be your strength when you need it, and to hold your hand through every adventure.': 'I promise to love you more each day, to be your strength when you need it, and to hold your hand through every adventure.',
-      'Forever Yours': 'Forever Yours',
-      'I love you more than words can express. You are my everything. 💕': 'I love you more than words can express. You are my everything. 💕',
-      
-      // Birthday Presentation Screen
-      'Click to begin your special day...': 'Click to begin your special day...',
-      'Enter Our Kingdom': 'Enter Our Kingdom',
-      'Skip Presentation': 'Skip Presentation',
-      
-      // Return buttons and navigation
-      'Back': 'Back',
-      'Return': 'Return',
-      'Go Back': 'Go Back',
-      'Home': 'Home',
-      'Main Menu': 'Main Menu',
-      
-      // Music Player
-      'Volume': 'Volume',
-      'Music Player': 'Music Player',
-      'Open Music Player': 'Open Music Player',
-      'Close Music Player': 'Close Music Player',
-      'Previous Song': 'Previous Song',
-      'Next Song': 'Next Song',
-      'Play Music': 'Play Music',
-      'Pause Music': 'Pause Music',
-      'Music is loading...': 'Music is loading...',
-      'Music will be available soon': 'Music will be available soon',
-      
-      // Emotional Support
-      'You are beautiful': 'You are beautiful',
-      'You are amazing': 'You are amazing',
-      'You are perfect': 'You are perfect',
-      'You are my everything': 'You are my everything',
-      'You make me happy': 'You make me happy',
-      'You are my dream come true': 'You are my dream come true',
-      'You are my soulmate': 'You are my soulmate',
-      'You are my best friend': 'You are my best friend',
-      'You are my partner': 'You are my partner',
-      'You are my love': 'You are my love',
-      'You are my life': 'You are my life',
-      'You are my future': 'You are my future',
-      'You are my past': 'You are my past',
-      'You are my present': 'You are my present',
-      'You are my yesterday': 'You are my yesterday',
-      'You are my today': 'You are my today',
-      'You are my tomorrow': 'You are my tomorrow',
-      'You are my always': 'You are my always',
-      'You are my forever': 'You are my forever',
-      'You are my never': 'You are my never',
-      'You are my sometimes': 'You are my sometimes',
-      'You are my rarely': 'You are my rarely',
-      'You are my often': 'You are my often',
-      'You are my seldom': 'You are my seldom',
-      'You are my frequently': 'You are my frequently',
-      'You are my constantly': 'You are my constantly',
-      'You are my continuously': 'You are my continuously',
-      'You are my perpetually': 'You are my perpetually',
-      'You are my eternally': 'You are my eternally',
-
-      // New translations for hardcoded text
-      'Today you turn 26 and I want to celebrate every moment with you 💕': 'Today you turn 26 and I want to celebrate every moment with you 💕',
-      'Start Special Celebration': 'Start Special Celebration',
-      'Welcome to Our Kingdom!': 'Welcome to Our Kingdom!',
-      'Your special music is starting... 💕': 'Your special music is starting... 💕',
-      'Open Magic Theatre': 'Open Magic Theatre',
-      'Beautiful Memory': 'Beautiful Memory',
-      'Volume control': 'Volume control',
-    }
-  },
   es: {
     translation: {
       // Navigation
@@ -511,31 +252,28 @@ const resources = {
 
       // New translations for hardcoded text
       'Today you turn 26 and I want to celebrate every moment with you 💕': 'Hoy cumples 26 años y quiero celebrar cada momento contigo 💕',
-      'Start Special Celebration': 'Comenzar Celebración Especial',
       'Welcome to Our Kingdom!': '¡Bienvenida a Nuestro Reino!',
       'Your special music is starting... 💕': 'Tu música especial está comenzando... 💕',
       'Open Magic Theatre': 'Abrir Teatro Mágico',
       'Beautiful Memory': 'Hermoso Recuerdo',
       'Volume control': 'Control de volumen',
+      
+      // Birthday Presentation Phrases
+      'Happy Birthday, My Love!': '¡Feliz Cumpleaños, Mi Amor!',
     }
   }
 };
 
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'en',
+    lng: 'es', // Default to Spanish
+    fallbackLng: 'es',
     debug: false,
     
     interpolation: {
       escapeValue: false,
-    },
-    
-    detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage'],
     },
   });
 

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Character,
   Heart,
@@ -45,6 +45,12 @@ const Dashboard = () => {
     if (hour < 12) return "Good morning";
     if (hour < 18) return "Good afternoon";
     return "Good evening";
+  };
+
+  const handleButtonHover = () => {
+    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+    sound.volume = 0.3;
+    sound.play().catch(console.warn);
   };
 
   const containerVariants = {
@@ -93,254 +99,183 @@ const Dashboard = () => {
       color: 'from-pixel-purple to-pixel-pink',
       glow: 'glow-blue',
       emoji: '📸',
-      icon1: <Flower color='pink' className='mr-2' />,
-      icon2: <Flower color='purple' className='ml-2' />,
+      icon1: <Heart size='small' className='mr-2' />,
+      icon2: <Heart size='small' className='ml-2' />,
     },
     {
       id: 'about-us',
       title: t('About Us'),
       description: t('Learn more about our story and the love that built this kingdom!'),
       buttonText: t('Our Story →'),
-      color: 'from-pixel-pink to-pixel-purple',
-      glow: 'glow-blue',
+      color: 'from-pixel-red to-pixel-orange',
+      glow: 'glow-purple',
       emoji: '💕',
-      icon1: <Flower color='pink' className='mr-2' />,
-      icon2: <Flower color='purple' className='ml-2' />,
+      icon1: <Castle className='mr-2' />,
+      icon2: <Castle className='ml-2' />,
     },
   ];
 
   return (
     <motion.div
       variants={containerVariants}
-      initial='hidden'
-      animate='visible'
-      className='min-h-screen bg-pixel-pattern'
+      initial="hidden"
+      animate="visible"
+      className="relative z-20"
     >
-      {/* Hero Section with Emotional Support */}
+      {/* Welcome Section with Undertale Style */}
       <motion.div
         variants={itemVariants}
-        className='text-center mb-8 md:mb-12 relative flex flex-col items-center z-10'
+        className="text-center mb-8 md:mb-12"
       >
-        <div className='absolute inset-0 flex justify-center items-center pointer-events-none z-0'>
-          <motion.div
-            animate={reducedMotion ? {} : { 
-              scale: [1, 1.1, 1],
-              rotate: [0, 5, -5, 0]
-            }}
-            transition={reducedMotion ? {} : { 
-              duration: 8, 
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            <Castle className='opacity-20 scale-150' />
-          </motion.div>
-        </div>
-        <motion.div className="inline-block px-6 py-4 rounded-xl bg-black/60 backdrop-blur-md shadow-2xl mb-4 md:mb-6 relative z-10">
-          <motion.h1 
-            className='pixel-title text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-2 text-yellow-300 drop-shadow-xl cursor-pointer'
-            animate={reducedMotion ? {} : { 
-              textShadow: [
-                "0 0 20px rgba(255,255,255,0.5)",
-                "0 0 40px rgba(255,255,255,0.8)",
-                "0 0 20px rgba(255,255,255,0.5)"
-              ]
-            }}
-            transition={reducedMotion ? {} : { duration: 3, repeat: Infinity }}
-            onClick={() => setShowSurprise(true)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setShowSurprise(true);
-              }
-            }}
-            aria-label="Click for a special surprise"
-          >
-            👑 {t('Our Happy Kingdom')} 👑
-          </motion.h1>
-          <motion.p 
-            className='pixel-subtitle text-lg sm:text-xl md:text-2xl mt-2 text-pink-200 drop-shadow-lg'
-            animate={reducedMotion ? {} : { opacity: [0.7, 1, 0.7] }}
-            transition={reducedMotion ? {} : { duration: 2, repeat: Infinity }}
-          >
-            {t(getGreeting())}, {t('my love! Welcome to our magical pixel world together! 💕')}
-          </motion.p>
-          
-          {/* Emotional Support Message */}
-          <motion.div 
-            className="mt-4 p-3 bg-pink-100/20 border border-pink-300/30 rounded-lg"
-            animate={reducedMotion ? {} : { opacity: [0.8, 1, 0.8] }}
-            transition={reducedMotion ? {} : { duration: 4, repeat: Infinity }}
-          >
-            <p className="pixel-text text-sm text-pink-200">
-              💕 Remember: You are stronger than you know, more loved than you can imagine, and never alone in this journey.
-            </p>
-          </motion.div>
-          
-          {/* Game References */}
-          <motion.div 
-            className="flex justify-center items-center gap-4 mt-4"
-            animate={reducedMotion ? {} : { opacity: [0.5, 1, 0.5] }}
-            transition={reducedMotion ? {} : { duration: 3, repeat: Infinity }}
-          >
-            <span className="text-sm md:text-base text-blue-200">🎮 Undertale</span>
-            <span className="text-sm md:text-base text-green-200">⛏️ Terraria</span>
-            <span className="text-sm md:text-base text-pink-200">💕 Together</span>
-          </motion.div>
+        <motion.div
+          animate={reducedMotion ? {} : { rotate: [0, 360] }}
+          transition={reducedMotion ? {} : { duration: 10, repeat: Infinity, ease: "linear" }}
+          className="text-6xl mb-4"
+        >
+          👑
         </motion.div>
+        
+        <h1 className="pixel-title text-3xl md:text-5xl text-yellow-300 mb-4">
+          {getGreeting()}, {t('my love! Welcome to our magical pixel world together! 💕')}
+        </h1>
+        
+        {/* Undertale-style message */}
+        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg mb-8 max-w-2xl mx-auto">
+          <p className="pixel-text text-lg text-yellow-300 mb-4">
+            "Tu eres mi Undertale y con amor vamos a hacer que todo sea más hermoso y divertido"
+          </p>
+          <p className="pixel-text text-sm text-white">
+            - Tu novio que te ama infinitamente 💕
+          </p>
+        </div>
 
-        {/* Character Sprites */}
-        <div className='flex justify-center items-center gap-4 md:gap-8 mt-6 md:mt-8 relative z-10'>
-          <motion.div
-            animate={reducedMotion ? {} : { x: [0, 10, 0] }}
+        {/* Undertale characters floating */}
+        <div className="flex justify-center gap-6 mb-8">
+          <motion.img
+            src="/images/undertale/papyrus.png"
+            alt="Papyrus"
+            className="w-16 h-16"
+            animate={reducedMotion ? {} : { y: [0, -10, 0] }}
             transition={reducedMotion ? {} : { duration: 2, repeat: Infinity }}
-            className="transform hover:scale-110 transition-transform"
-          >
-            <Character type='player1' direction='right' />
-          </motion.div>
-          <motion.div
-            animate={reducedMotion ? {} : { 
-              scale: [1, 1.2, 1],
-              rotate: [0, 10, -10, 0]
-            }}
-            transition={reducedMotion ? {} : { duration: 3, repeat: Infinity }}
-          >
-            <Heart size='large' />
-          </motion.div>
-          <motion.div
-            animate={reducedMotion ? {} : { x: [0, -10, 0] }}
+          />
+          <motion.img
+            src="/images/undertale/sans.´png.png"
+            alt="Sans"
+            className="w-16 h-16"
+            animate={reducedMotion ? {} : { y: [0, -10, 0] }}
+            transition={reducedMotion ? {} : { duration: 2, repeat: Infinity, delay: 0.5 }}
+          />
+          <motion.img
+            src="/images/undertale/undertale_kid.png"
+            alt="Undertale Kid"
+            className="w-16 h-16"
+            animate={reducedMotion ? {} : { y: [0, -10, 0] }}
             transition={reducedMotion ? {} : { duration: 2, repeat: Infinity, delay: 1 }}
-            className="transform hover:scale-110 transition-transform"
-          >
-            <Character type='player2' direction='left' />
-          </motion.div>
+          />
         </div>
       </motion.div>
 
       {/* Main Content Grid */}
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 px-4'>
-        {cards.map((card) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        {cards.map((card, index) => (
           <motion.div
             key={card.id}
             variants={itemVariants}
-            className={`pixel-card bg-gradient-to-br ${card.color} cursor-pointer transition-all duration-300 ${card.glow} ${
-              hoveredCard === card.id ? 'scale-105 shadow-2xl' : 'hover:scale-105'
-            } z-20`}
-            onHoverStart={() => setHoveredCard(card.id)}
-            onHoverEnd={() => setHoveredCard(null)}
-            whileHover={reducedMotion ? {} : { y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.3)" }}
-            onClick={() => {
-              if (card.id === 'two-roads') navigate('/two-roads');
-              if (card.id === 'our-play') navigate('/our-play');
-              if (card.id === 'gallery') navigate('/gallery');
-              if (card.id === 'about-us') navigate('/about-us');
-            }}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                if (card.id === 'two-roads') navigate('/two-roads');
-                if (card.id === 'our-play') navigate('/our-play');
-                if (card.id === 'gallery') navigate('/gallery');
-                if (card.id === 'about-us') navigate('/about-us');
-              }
-            }}
-            aria-label={`Navigate to ${card.title}`}
+            className="pixel-card"
+            onMouseEnter={() => setHoveredCard(card.id)}
+            onMouseLeave={() => setHoveredCard(null)}
           >
-            <div className='text-center p-4 md:p-6 relative z-20'>
-              <motion.div 
-                className='flex justify-center items-center mb-4'
-                animate={hoveredCard === card.id ? { scale: 1.2 } : { scale: 1 }}
-                transition={{ duration: 0.3 }}
+            <div className="text-center p-6">
+              <motion.div
+                animate={reducedMotion ? {} : { scale: [1, 1.1, 1] }}
+                transition={reducedMotion ? {} : { duration: 2, repeat: Infinity }}
+                className="text-4xl mb-4"
               >
-                {card.icon1}
-                <span className='text-3xl md:text-4xl mx-2' aria-hidden="true">{card.emoji}</span>
-                {card.icon2}
+                {card.emoji}
               </motion.div>
-              <h3 className='pixel-title text-lg md:text-xl mb-3 md:mb-4'>{card.title}</h3>
-              <p className='pixel-text mb-4 md:mb-6 text-sm md:text-base'>{card.description}</p>
-              <motion.button
-                whileHover={reducedMotion ? {} : { scale: 1.05 }}
-                whileTap={reducedMotion ? {} : { scale: 0.95 }}
-                className='pixel-button bg-pixel-purple hover:bg-pixel-pink text-sm md:text-base px-4 py-2 z-30 relative'
+              <h2 className="pixel-title text-2xl md:text-3xl text-yellow-300 mb-4">
+                {card.title}
+              </h2>
+              <p className="pixel-text text-white/90 mb-6">
+                {card.description}
+              </p>
+              <Link 
+                to={`/${card.id}`}
+                className={`pixel-button bg-gradient-to-r ${card.color}`}
+                onMouseEnter={handleButtonHover}
               >
-                {card.buttonText}
-              </motion.button>
+                <span className="flex items-center gap-2">
+                  <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                  {card.buttonText}
+                  <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                </span>
+              </Link>
             </div>
           </motion.div>
         ))}
-        
-        {/* Special Card with Enhanced Emotional Support */}
-        <motion.div
-          variants={itemVariants}
-          className='pixel-card bg-gradient-to-br from-pixel-pink to-pixel-yellow cursor-pointer transition-all duration-300 hover:scale-105 shadow-2xl flex flex-col items-center justify-center'
-          onClick={() => setShowSpecialCard(true)}
-          whileHover={reducedMotion ? {} : { y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.3)" }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              setShowSpecialCard(true);
-            }
-          }}
-          aria-label="Read a special message of love and support"
-        >
-          <span className='text-4xl mb-2' aria-hidden="true">💌</span>
-          <h3 className='pixel-title text-lg md:text-xl mb-3 md:mb-4'>{t('Special Letter')}</h3>
-          <p className='pixel-text mb-4 md:mb-6 text-sm md:text-base'>{t('Click to read a special letter written just for you.')}</p>
-        </motion.div>
       </div>
-      
-      {/* Special Love Letter */}
-      <LoveLetter 
-        isOpen={showSpecialCard} 
-        onClose={() => setShowSpecialCard(false)} 
-      />
-      
-      {/* Surprise Feature */}
-      <SurpriseFeature 
-        isActive={showSurprise} 
-        onClose={() => setShowSurprise(false)} 
-      />
 
-      {/* Enhanced Decorative Elements */}
-      <div className='mt-8 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 px-4'>
-        <motion.div
-          animate={reducedMotion ? {} : { rotate: [0, 360] }}
-          transition={reducedMotion ? {} : { duration: 20, repeat: Infinity, ease: 'linear' }}
-          className='flex justify-center'
-        >
-          <Flower color='yellow' />
-        </motion.div>
-        <motion.div
-          animate={reducedMotion ? {} : { y: [0, -10, 0] }}
-          transition={reducedMotion ? {} : { duration: 3, repeat: Infinity }}
-          className='flex justify-center'
-        >
-          <Tree type='fruit' />
-        </motion.div>
-        <motion.div
-          animate={reducedMotion ? {} : { scale: [1, 1.2, 1] }}
-          transition={reducedMotion ? {} : { duration: 2, repeat: Infinity }}
-          className='flex justify-center'
-        >
-          <Star />
-        </motion.div>
-        <motion.div
-          animate={reducedMotion ? {} : { rotate: [0, -360] }}
-          transition={reducedMotion ? {} : { duration: 15, repeat: Infinity, ease: 'linear' }}
-          className='flex justify-center'
-        >
-          <Flower color='red' />
-        </motion.div>
+      {/* Special Undertale Message */}
+      <motion.div
+        variants={itemVariants}
+        className="mt-12 p-6 bg-gradient-to-r from-pixel-purple/20 to-pixel-pink/20 rounded-lg border border-pixel-purple/30"
+      >
+        <div className="text-center">
+          <h3 className="pixel-title text-2xl text-yellow-300 mb-4">
+            🎮 Undertale Love Message 🎮
+          </h3>
+          <p className="pixel-text text-white/90 mb-4">
+            "Como en Undertale, cada decisión que tomamos juntos nos acerca más. 
+            Tu amor es mi DETERMINACIÓN para hacer que todo sea perfecto. 
+            Juntos construimos nuestro propio reino de felicidad, ladrillo a ladrillo, 
+            como en Terraria, pero con mucho más amor y risas."
+          </p>
+          <p className="pixel-text text-sm text-yellow-300">
+            - Tu novio que te ama más que Sans ama los chistes malos 💕
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Floating Hearts Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
+        {Array.from({ length: 8 }, (_, i) => (
+          <motion.div
+            key={i}
+            className="absolute"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={reducedMotion ? {} : {
+              y: [0, -40, 0],
+              opacity: [0.3, 0.8, 0.3],
+              scale: [1, 1.2, 1],
+            }}
+            transition={reducedMotion ? {} : {
+              duration: 4 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+            }}
+          >
+            <img 
+              src="/images/undertale/heart.png" 
+              alt="Undertale Heart" 
+              className="w-6 h-6"
+            />
+          </motion.div>
+        ))}
       </div>
 
       {/* Floating Elements */}
       <FloatingElements />
+
+      {/* Special Features */}
+      <motion.div variants={itemVariants} className="mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <LoveLetter onOpen={() => setShowSpecialCard(true)} />
+          <SurpriseFeature onOpen={() => setShowSurprise(true)} />
+        </div>
+      </motion.div>
     </motion.div>
   );
 };

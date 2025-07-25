@@ -61,36 +61,40 @@ const EmotionalSupport = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMessage((prev) => (prev + 1) % messages.length);
-    }, 5000); // Change message every 5 seconds
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [messages.length]);
 
   return (
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-40 pointer-events-none">
+    <motion.div
+      className="fixed bottom-6 left-6 z-40"
+      initial={{ opacity: 0, x: -50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, delay: 1 }}
+    >
       <AnimatePresence mode="wait">
         <motion.div
           key={currentMessage}
-          initial={{ opacity: 0, y: -20, scale: 0.8 }}
+          className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-3 rounded-lg shadow-lg max-w-xs"
+          initial={{ opacity: 0, y: 20, scale: 0.8 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.8 }}
-          transition={{ duration: 0.8 }}
-          className="bg-gradient-to-r from-pixel-pink to-pixel-purple text-white px-6 py-3 rounded-full shadow-lg border-2 border-white"
+          exit={{ opacity: 0, y: -20, scale: 0.8 }}
+          transition={{ duration: 0.5 }}
         >
           <motion.div
             className="flex items-center gap-2"
             animate={reducedMotion ? {} : { scale: [1, 1.05, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <span className="text-xl">💕</span>
-            <span className="pixel-text text-sm font-medium whitespace-nowrap">
+            <span className="text-xl" role="img" aria-label="Heart">💕</span>
+            <p className="pixel-text text-sm font-medium">
               {messages[currentMessage]}
-            </span>
-            <span className="text-xl">💕</span>
+            </p>
           </motion.div>
         </motion.div>
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
 
