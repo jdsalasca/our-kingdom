@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
 
 const EmotionalSupport = () => {
-  const { t } = useTranslation();
   const [currentMessage, setCurrentMessage] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -18,43 +16,48 @@ const EmotionalSupport = () => {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Enhanced emotional support messages
+  // Enhanced emotional support messages in Spanish with Undertale/Terraria references
   const messages = [
-    t('You are loved'),
-    t('You are strong'),
-    t('You are never alone'),
-    t('Together we are invincible'),
-    t('Your love lights up my world'),
-    t('I am here for you always'),
-    t('You are beautiful'),
-    t('You are amazing'),
-    t('You are perfect'),
-    t('You are my everything'),
-    t('You make me happy'),
-    t('You are my dream come true'),
-    t('You are my soulmate'),
-    t('You are my best friend'),
-    t('You are my partner'),
-    t('You are my love'),
-    t('You are my life'),
-    t('You are my future'),
-    t('You are my past'),
-    t('You are my present'),
-    t('You are my yesterday'),
-    t('You are my today'),
-    t('You are my tomorrow'),
-    t('You are my always'),
-    t('You are my forever'),
-    t('You are my never'),
-    t('You are my sometimes'),
-    t('You are my rarely'),
-    t('You are my often'),
-    t('You are my seldom'),
-    t('You are my frequently'),
-    t('You are my constantly'),
-    t('You are my continuously'),
-    t('You are my perpetually'),
-    t('You are my eternally'),
+    'Eres mi DETERMINACIÓN 💕',
+    'Tu amor es mi LOVE infinito ❤️',
+    'Juntos somos invencibles ⚔️',
+    'Tu sonrisa ilumina mi mundo 🌟',
+    'Siempre estaré aquí para ti 🛡️',
+    'Eres mi tesoro más preciado 💎',
+    'Tu amor me hace mejor cada día 🌱',
+    'Eres mi sueño hecho realidad ✨',
+    'Contigo todo es posible 🎮',
+    'Tu corazón es mi hogar 🏠',
+    'Eres mi compañera perfecta 👑',
+    'Tu amor es mi fuerza 💪',
+    'Juntos construimos nuestro reino 🏰',
+    'Eres mi inspiración diaria 🌅',
+    'Tu presencia hace todo especial 🌈',
+    'Eres la razón de mi felicidad 😊',
+    'Contigo he encontrado el amor verdadero 💖',
+    'Tu corazón es donde quiero vivir 💝',
+    'Eres la persona que hace mi vida perfecta 🎯',
+    'Tu amor es el regalo más hermoso 🎁',
+    'Cada momento contigo es mágico 🔮',
+    'Eres mi compañera de vida eterna 💫',
+    'Tu presencia hace cada día una celebración 🎉',
+    'Eres la razón por la que mi corazón late con alegría 💓',
+    'Contigo he descubierto que el amor es la respuesta 🌟',
+    'Tu amor es el regalo más hermoso que he recibido 💝',
+    'Eres mi Undertale y mi Terraria 💎',
+    'Juntos somos más fuertes que cualquier boss ⚔️',
+    'Tu amor es mi Life Crystal ❤️',
+    'Eres mi Heart Crystal eterno 💖',
+    'Contigo he derrotado la soledad 🛡️',
+    'Tu amor es mi Love Potion más poderosa 🧪',
+    'Eres mi Diamond of Love 💎',
+    'Juntos plantamos árboles de amor 🌳',
+    'Tu amor es mi Golden Fish más preciado 🐟',
+    'Eres mi Castle of Love más hermoso 🏰',
+    'Contigo he encontrado mi Treasure más valioso 💰',
+    'Tu amor es mi Home más cálido 🏠',
+    'Eres mi Fallen Down más hermoso 🍂',
+    'Juntos creamos nuestro Once Upon a Time ✨',
   ];
 
   // Rotate through messages

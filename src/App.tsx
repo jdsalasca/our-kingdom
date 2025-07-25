@@ -25,6 +25,7 @@ function App() {
   // Undertale Button Modal State
   type UndertaleActionType = 'Fight' | 'Act' | 'Item' | 'Mercy';
   const [undertaleModal, setUndertaleModal] = useState<{ open: boolean; type: UndertaleActionType | null }>({ open: false, type: null });
+  const [floatingMessage, setFloatingMessage] = useState<{ show: boolean; message: string; position: { x: number; y: number } }>({ show: false, message: '', position: { x: 0, y: 0 } });
 
   // Undertale button actions
   const undertaleActions = {
@@ -45,6 +46,51 @@ function App() {
       img: '/images/undertale/heart.png',
     },
   };
+
+  // Undertale-style floating messages
+  const floatingMessages = [
+    "* Tu amor me hace sentir DETERMINADO 💕",
+    "* Papyrus dice: 'NYEH HEH HEH! ¡Este amor es muy cool!'",
+    "* Sans dice: 'heh, el amor es genial, chica.'",
+    "* Asriel envía un abrazo virtual 💙",
+    "* Has encontrado: [Cristal de Amor] ❤️",
+    "* Tu nivel de relación aumentó! ⬆️",
+    "* Has desbloqueado: [Felicidad Eterna] ✨",
+    "* Te sientes cálido y feliz por dentro 🌟",
+    "* Tu alma brilla más fuerte! 💫",
+    "* Has derrotado: [Boss de la Soledad] ⚔️",
+    "* Has construido: [Castillo del Amor] 🏰",
+    "* Has pescado: [Pez Dorado del Amor] 🐟",
+    "* Has plantado: [Árbol del Amor] 🌳",
+    "* Has minado: [Diamante del Amor] 💎",
+    "* Has elaborado: [Poción de Amor] 🧪",
+  ];
+
+  // Show random floating message
+  const showFloatingMessage = () => {
+    const randomMessage = floatingMessages[Math.floor(Math.random() * floatingMessages.length)];
+    const randomX = Math.random() * (window.innerWidth - 300);
+    const randomY = Math.random() * (window.innerHeight - 100);
+    
+    setFloatingMessage({ 
+      show: true, 
+      message: randomMessage, 
+      position: { x: randomX, y: randomY } 
+    });
+    
+    setTimeout(() => setFloatingMessage({ show: false, message: '', position: { x: 0, y: 0 } }), 4000);
+  };
+
+  // Trigger floating messages periodically
+  useEffect(() => {
+    const messageInterval = setInterval(() => {
+      if (Math.random() < 0.3 && presentationComplete) {
+        showFloatingMessage();
+      }
+    }, 15000);
+
+    return () => clearInterval(messageInterval);
+  }, [presentationComplete]);
 
   // Play Undertale button sound
   const playButtonSound = () => {
@@ -389,6 +435,39 @@ function App() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Floating Undertale Message */}
+        {floatingMessage.show && (
+          <motion.div
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white/90 rounded-lg shadow-2xl p-6 max-w-sm text-center border-4 border-yellow-400 relative"
+              initial={{ scale: 0.8, y: 40 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 40 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+              style={{
+                position: 'absolute',
+                top: floatingMessage.position.y,
+                left: floatingMessage.position.x,
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <p className="pixel-text text-lg text-yellow-800 mb-4">{floatingMessage.message}</p>
+              <button
+                className="pixel-button bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500 transition"
+                onClick={() => setFloatingMessage({ show: false, message: '', position: { x: 0, y: 0 } })}
+                autoFocus
+              >
+                OK
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
       </div>
     </Router>
   );

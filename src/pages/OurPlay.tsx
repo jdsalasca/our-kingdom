@@ -1,6 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 interface MemoryCard {
@@ -17,74 +16,85 @@ interface QuizQuestion {
 }
 
 const OurPlay = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   const [memoryCards, setMemoryCards] = useState<MemoryCard[]>([]);
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [memoryScore, setMemoryScore] = useState(0);
-  const [quizQuestions] = useState<QuizQuestion[]>([
-    {
-      question: t('What is your favorite color?'),
-      options: [t('Pink'), t('Blue'), t('Purple'), t('Green')],
-      correctAnswer: 0
-    },
-    {
-      question: t('What is your favorite food?'),
-      options: [t('Pizza'), t('Sushi'), t('Tacos'), t('Pasta')],
-      correctAnswer: 1
-    },
-    {
-      question: t('What is your dream vacation?'),
-      options: [t('Beach'), t('Mountains'), t('City'), t('Forest')],
-      correctAnswer: 2
-    }
-  ]);
   const [currentQuizQuestion, setCurrentQuizQuestion] = useState(0);
   const [quizScore, setQuizScore] = useState(0);
   const [showQuizResult, setShowQuizResult] = useState(false);
 
+  // Enhanced quiz questions in Spanish
+  const [quizQuestions] = useState<QuizQuestion[]>([
+    {
+      question: '¿Cuál es tu color favorito?',
+      options: ['Rosa', 'Azul', 'Púrpura', 'Verde'],
+      correctAnswer: 0
+    },
+    {
+      question: '¿Cuál es tu comida favorita?',
+      options: ['Pizza', 'Sushi', 'Tacos', 'Pasta'],
+      correctAnswer: 1
+    },
+    {
+      question: '¿Cuál es tu sueño de vacaciones?',
+      options: ['Playa', 'Montañas', 'Ciudad', 'Bosque'],
+      correctAnswer: 2
+    },
+    {
+      question: '¿Qué personaje de Undertale te gusta más?',
+      options: ['Sans', 'Papyrus', 'Asriel', 'Frisk'],
+      correctAnswer: 0
+    },
+    {
+      question: '¿Qué te gusta más de Terraria?',
+      options: ['Construir', 'Explorar', 'Combatir', 'Pescar'],
+      correctAnswer: 0
+    }
+  ]);
+
   const games = [
     {
       id: 'memory',
-      name: t('Memory Match'),
+      name: 'Memoria del Amor',
       emoji: '🧠',
-      description: t('Find matching pairs of our special moments!'),
+      description: '¡Encuentra las parejas de nuestros momentos especiales! * Tu LOVE aumenta con cada coincidencia.',
       color: 'from-pixel-green to-pixel-blue',
     },
     {
       id: 'puzzle',
-      name: t('Love Puzzle'),
+      name: 'Rompecabezas del Amor',
       emoji: '🧩',
-      description: t('Solve puzzles together and unlock our memories!'),
+      description: '¡Resuelve puzzles juntos y desbloquea nuestros recuerdos! * Tu DETERMINACIÓN crece.',
       color: 'from-pixel-purple to-pixel-pink',
     },
     {
       id: 'adventure',
-      name: t('Our Adventure'),
+      name: 'Nuestra Aventura',
       emoji: '🗺️',
-      description: t('Go on a pixel adventure through our kingdom!'),
+      description: '¡Ve en una aventura pixelada a través de nuestro reino! * Explora como en Terraria.',
       color: 'from-pixel-yellow to-pixel-orange',
     },
     {
       id: 'quiz',
-      name: t('Love Quiz'),
+      name: 'Quiz del Amor',
       emoji: '💝',
-      description: t('Test how well we know each other!'),
+      description: '¡Pon a prueba qué tan bien nos conocemos! * Como Sans, pero con más amor.',
       color: 'from-pixel-red to-pixel-pink',
     },
     {
       id: 'undertale',
-      name: 'Undertale Adventure',
+      name: 'Aventura Undertale',
       emoji: '💙',
-      description: 'Explore our friendship and love through Undertale themes!',
+      description: '¡Explora nuestra amistad y amor a través de temas de Undertale! * Tu alma brilla más fuerte.',
       color: 'from-pixel-blue to-pixel-purple',
     },
     {
       id: 'terraria',
-      name: 'Terraria Build',
+      name: 'Construcción Terraria',
       emoji: '⛏️',
-      description: 'Build our perfect world together, block by block!',
+      description: '¡Construye nuestro mundo perfecto juntos, bloque a bloque! * Como construir un castillo de amor.',
       color: 'from-pixel-green to-pixel-brown',
     },
   ];
@@ -92,7 +102,7 @@ const OurPlay = () => {
   // Initialize Memory Game
   useEffect(() => {
     if (currentGame === 'memory') {
-      const emojis = ['💕', '🌟', '🎮', '🏰', '🌸', '⭐', '🎵', '💎', '💙', '⛏️', '🎯', '🏆'];
+      const emojis = ['💙', '💛', '💖', '💎', '⭐', '🌸', '🎮', '🏰', '⛏️', '🎯', '🏆', '💕'];
       const cards = [...emojis, ...emojis].map((emoji, index) => ({
         id: index,
         emoji,
@@ -110,11 +120,19 @@ const OurPlay = () => {
     }
   }, [currentGame]);
 
+  // Play Undertale sound effect
+  const playSound = () => {
+    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+    sound.volume = 0.3;
+    sound.play().catch(() => {});
+  };
+
   const handleMemoryCardClick = (cardId: number) => {
     if (flippedCards.length === 2 || memoryCards[cardId].isFlipped || memoryCards[cardId].isMatched) {
       return;
     }
 
+    playSound();
     const newFlippedCards = [...flippedCards, cardId];
     setFlippedCards(newFlippedCards);
 
@@ -172,13 +190,14 @@ const OurPlay = () => {
       className="pixel-card bg-gradient-to-br from-pixel-green to-pixel-blue max-w-4xl mx-auto"
     >
       <div className="text-center mb-6">
-        <h2 className="pixel-title text-2xl mb-4">{t('Memory Match')}</h2>
-        <p className="pixel-text mb-4">{t('Score')}: {memoryScore}</p>
+        <h2 className="pixel-title text-2xl mb-4">Memoria del Amor</h2>
+        <p className="pixel-text mb-4">Puntuación: {memoryScore} * Tu LOVE aumenta con cada coincidencia</p>
         <motion.button
           onClick={() => setCurrentGame(null)}
           className="pixel-button bg-pixel-red hover:bg-pixel-orange mb-4"
+          onMouseEnter={playSound}
         >
-          {t('Back to Games')}
+          Volver a los Juegos
         </motion.button>
       </div>
       
@@ -214,9 +233,9 @@ const OurPlay = () => {
       <div className="text-center">
         {!showQuizResult ? (
           <>
-            <h2 className="pixel-title text-2xl mb-6">{t('Love Quiz')}</h2>
+            <h2 className="pixel-title text-2xl mb-6">Quiz del Amor</h2>
             <p className="pixel-text mb-4">
-              {t('Question')} {currentQuizQuestion + 1} / {quizQuestions.length}
+              Pregunta {currentQuizQuestion + 1} / {quizQuestions.length} * Como Sans, pero con más amor
             </p>
             <div className="mb-6">
               <h3 className="pixel-title text-lg mb-4">
@@ -230,6 +249,7 @@ const OurPlay = () => {
                     className="quiz-option"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
+                    onMouseEnter={playSound}
                   >
                     {option}
                   </motion.button>
@@ -239,24 +259,26 @@ const OurPlay = () => {
           </>
         ) : (
           <>
-            <h2 className="pixel-title text-2xl mb-6">{t('Quiz Complete!')}</h2>
+            <h2 className="pixel-title text-2xl mb-6">¡Quiz Completado!</h2>
             <div className="text-4xl mb-4">
               {quizScore === quizQuestions.length ? '🎉' : '💕'}
             </div>
             <p className="pixel-text mb-4">
-              {t('Your Score')}: {quizScore} / {quizQuestions.length}
+              Tu puntuación: {quizScore} / {quizQuestions.length} * Tu DETERMINACIÓN crece
             </p>
             <motion.button
               onClick={resetQuiz}
               className="pixel-button bg-pixel-green hover:bg-pixel-yellow mr-4"
+              onMouseEnter={playSound}
             >
-              {t('Play Again')}
+              Jugar de Nuevo
             </motion.button>
             <motion.button
               onClick={() => setCurrentGame(null)}
               className="pixel-button bg-pixel-red hover:bg-pixel-orange"
+              onMouseEnter={playSound}
             >
-              {t('Back to Games')}
+              Volver a los Juegos
             </motion.button>
           </>
         )}
@@ -271,10 +293,10 @@ const OurPlay = () => {
       className="pixel-card bg-gradient-to-br from-pixel-blue to-pixel-purple max-w-2xl mx-auto"
     >
       <div className="text-center">
-        <h2 className="pixel-title text-2xl mb-6">Undertale Adventure</h2>
+        <h2 className="pixel-title text-2xl mb-6">Aventura Undertale</h2>
         <div className="text-6xl mb-4">💙</div>
         <p className="pixel-text mb-6">
-          {t('En Undertale, cada decisión importa. Juntos hemos elegido el camino del amor y la amistad.')}
+          En Undertale, cada decisión importa. Juntos hemos elegido el camino del amor y la amistad. * Tu alma brilla más fuerte.
         </p>
         <div className="space-y-4 mb-6">
           <div className="flex items-center justify-between p-3 bg-white/20 rounded">
@@ -282,19 +304,20 @@ const OurPlay = () => {
             <span className="pixel-text text-pink-300">∞</span>
           </div>
           <div className="flex items-center justify-between p-3 bg-white/20 rounded">
-            <span className="pixel-text">💙 FRIENDSHIP</span>
+            <span className="pixel-text">💙 AMISTAD</span>
             <span className="pixel-text text-blue-300">∞</span>
           </div>
           <div className="flex items-center justify-between p-3 bg-white/20 rounded">
-            <span className="pixel-text">🌟 DETERMINATION</span>
+            <span className="pixel-text">🌟 DETERMINACIÓN</span>
             <span className="pixel-text text-yellow-300">∞</span>
           </div>
         </div>
         <motion.button
           onClick={() => setCurrentGame(null)}
           className="pixel-button bg-pixel-purple hover:bg-pixel-pink"
+          onMouseEnter={playSound}
         >
-          {t('Back to Games')}
+          Volver a los Juegos
         </motion.button>
       </div>
     </motion.div>
@@ -307,30 +330,31 @@ const OurPlay = () => {
       className="pixel-card bg-gradient-to-br from-pixel-green to-pixel-brown max-w-2xl mx-auto"
     >
       <div className="text-center">
-        <h2 className="pixel-title text-2xl mb-6">Terraria Build</h2>
+        <h2 className="pixel-title text-2xl mb-6">Construcción Terraria</h2>
         <div className="text-6xl mb-4">⛏️</div>
         <p className="pixel-text mb-6">
-          {t('Como en Terraria, construimos nuestro mundo perfecto juntos, ladrillo a ladrillo.')}
+          Como en Terraria, construimos nuestro mundo perfecto juntos, ladrillo a ladrillo. * Como construir un castillo de amor.
         </p>
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="text-center p-3 bg-white/20 rounded">
             <div className="text-2xl mb-2">🏠</div>
-            <div className="pixel-text text-sm">{t('Nuestro Hogar')}</div>
+            <div className="pixel-text text-sm">Nuestro Hogar</div>
           </div>
           <div className="text-center p-3 bg-white/20 rounded">
             <div className="text-2xl mb-2">💕</div>
-            <div className="pixel-text text-sm">{t('Nuestro Amor')}</div>
+            <div className="pixel-text text-sm">Nuestro Amor</div>
           </div>
           <div className="text-center p-3 bg-white/20 rounded">
             <div className="text-2xl mb-2">👑</div>
-            <div className="pixel-text text-sm">{t('Nuestro Reino')}</div>
+            <div className="pixel-text text-sm">Nuestro Reino</div>
           </div>
         </div>
         <motion.button
           onClick={() => setCurrentGame(null)}
           className="pixel-button bg-pixel-green hover:bg-pixel-yellow"
+          onMouseEnter={playSound}
         >
-          {t('Back to Games')}
+          Volver a los Juegos
         </motion.button>
       </div>
     </motion.div>
@@ -354,14 +378,14 @@ const OurPlay = () => {
           }}
           transition={{ duration: 3, repeat: Infinity }}
         >
-          🎮 {t('Our Play')} 🎮
+          🎮 Nuestro Juego 🎮
         </motion.h1>
         <motion.p 
           className='pixel-subtitle text-lg sm:text-xl'
           animate={{ opacity: [0.7, 1, 0.7] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          {t("Let's have fun together in our pixel paradise!")}
+          ¡Vamos a divertirnos juntos en nuestro paraíso pixelado! * Tu DETERMINACIÓN aumenta.
         </motion.p>
       </div>
 
@@ -420,16 +444,18 @@ const OurPlay = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className='pixel-button bg-pixel-purple hover:bg-pixel-pink mr-4'
+                onMouseEnter={playSound}
               >
-                {t('Start Game')}
+                Iniciar Juego
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className='pixel-button bg-pixel-red hover:bg-pixel-orange'
                 onClick={() => setCurrentGame(null)}
+                onMouseEnter={playSound}
               >
-                {t('Back to Games')}
+                Volver a los Juegos
               </motion.button>
             </div>
           </motion.div>
@@ -452,8 +478,13 @@ const OurPlay = () => {
             }}
             whileHover={{ scale: 1.05, rotate: 2 }}
             whileTap={{ scale: 0.95 }}
+            onMouseEnter={playSound}
           >
-            ← {t('Back to Our Kingdom')}
+            <span className="flex items-center gap-2">
+              <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+              ← Volver a Nuestro Reino
+              <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+            </span>
           </motion.button>
         </motion.div>
       )}
