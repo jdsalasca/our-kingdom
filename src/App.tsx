@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import MusicPlayer from './components/MusicPlayer';
 import EmotionalSupport from './components/EmotionalSupport';
 import BirthdayPresentation from './components/BirthdayPresentation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 function App() {
   const { t } = useTranslation();
@@ -19,6 +19,39 @@ function App() {
   const [showBirthdayPresentation, setShowBirthdayPresentation] = useState(false);
   const [presentationComplete, setPresentationComplete] = useState(false);
   const [userInteracted, setUserInteracted] = useState(false);
+  const [bgMusicStarted, setBgMusicStarted] = useState(false);
+  const bgMusicRef = useRef<HTMLAudioElement>(null);
+
+  // Undertale Button Modal State
+  type UndertaleActionType = 'Fight' | 'Act' | 'Item' | 'Mercy';
+  const [undertaleModal, setUndertaleModal] = useState<{ open: boolean; type: UndertaleActionType | null }>({ open: false, type: null });
+
+  // Undertale button actions
+  const undertaleActions = {
+    Fight: {
+      message: 'I would never fight you, only love you! ❤️',
+      img: '/images/undertale/heart.png',
+    },
+    Act: {
+      message: 'You tell her a joke. She laughs! *You feel your love increase.*',
+      img: '/images/undertale/papyrus.png',
+    },
+    Item: {
+      message: 'You use a Love Potion! *Your heart grows warmer.*',
+      img: '/images/undertale/asriel.png',
+    },
+    Mercy: {
+      message: 'Mercy? Always! I will always forgive and love you. 💛',
+      img: '/images/undertale/heart.png',
+    },
+  };
+
+  // Play Undertale button sound
+  const playButtonSound = () => {
+    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+    sound.volume = 0.3;
+    sound.play().catch(() => {});
+  };
 
   // Check for reduced motion preference
   useEffect(() => {
@@ -71,6 +104,15 @@ function App() {
     setPresentationComplete(true);
   };
 
+  // Start background music after presentation is complete and user has interacted
+  useEffect(() => {
+    if (presentationComplete && userInteracted && !bgMusicStarted && bgMusicRef.current) {
+      bgMusicRef.current.volume = 0.25;
+      bgMusicRef.current.loop = true;
+      bgMusicRef.current.play().then(() => setBgMusicStarted(true)).catch(() => {});
+    }
+  }, [presentationComplete, userInteracted, bgMusicStarted]);
+
   // Optimized floating elements - reduced from 25 to 12 for better performance
   const floatingElements = Array.from({ length: 12 }, (_, i) => ({
     id: i,
@@ -114,6 +156,13 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-pixel-green via-pixel-blue to-pixel-purple bg-pixel-pattern relative">
+        {/* Undertale Background Music (always-on, not tied to MusicPlayer) */}
+        <audio
+          ref={bgMusicRef}
+          src="/music/undertale/once_upon_a_time.mp3"
+          preload="auto"
+          style={{ display: 'none' }}
+        />
         {/* Optimized Floating Hearts Background */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
           {floatingElements.map((element) => (
@@ -293,6 +342,53 @@ function App() {
         
         {/* Emotional Support */}
         <EmotionalSupport />
+
+        {/* Floating Undertale Button Group */}
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+          {(['Fight', 'Act', 'Item', 'Mercy'] as UndertaleActionType[]).map((type) => (
+            <motion.button
+              key={type}
+              className="pixel-button bg-black/80 border-2 border-yellow-400 text-yellow-200 flex items-center gap-2 px-4 py-2 mb-1 hover:bg-yellow-600/80 hover:text-white transition-all shadow-lg"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => { setUndertaleModal({ open: true, type: type as UndertaleActionType }); playButtonSound(); }}
+              onMouseEnter={playButtonSound}
+              aria-label={type}
+            >
+              <img src="/images/undertale/heart.png" alt="Heart" className="w-4 h-4" />
+              <span className="font-bold tracking-widest text-sm">{type}</span>
+            </motion.button>
+          ))}
+        </div>
+        {/* Undertale Modal */}
+        <AnimatePresence>
+          {undertaleModal.open && undertaleModal.type && (
+            <motion.div
+              className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="bg-white/90 rounded-lg shadow-2xl p-8 max-w-xs text-center border-4 border-yellow-400 relative"
+                initial={{ scale: 0.8, y: 40 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.8, y: 40 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+              >
+                <img src={undertaleActions[undertaleModal.type].img} alt={undertaleModal.type} className="mx-auto w-16 h-16 mb-4" />
+                <p className="pixel-text text-lg text-yellow-800 mb-4">{undertaleActions[undertaleModal.type].message}</p>
+                <button
+                  className="pixel-button bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500 transition"
+                  onClick={() => { setUndertaleModal({ open: false, type: null }); playButtonSound(); }}
+                  autoFocus
+                >
+                  OK
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </Router>
   );
