@@ -6,48 +6,44 @@ import TwoRoads from './pages/TwoRoads';
 import OurPlay from './pages/OurPlay';
 import AboutUs from './pages/AboutUs';
 import Gallery from './components/Gallery';
-import { useTranslation } from 'react-i18next';
 import MusicPlayer from './components/MusicPlayer';
 import EmotionalSupport from './components/EmotionalSupport';
 import BirthdayPresentation from './components/BirthdayPresentation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
-  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [showBirthdayPresentation, setShowBirthdayPresentation] = useState(false);
   const [presentationComplete, setPresentationComplete] = useState(false);
   const [userInteracted, setUserInteracted] = useState(false);
-  const [bgMusicStarted, setBgMusicStarted] = useState(false);
-  const bgMusicRef = useRef<HTMLAudioElement>(null);
 
   // Undertale Button Modal State
   type UndertaleActionType = 'Fight' | 'Act' | 'Item' | 'Mercy';
   const [undertaleModal, setUndertaleModal] = useState<{ open: boolean; type: UndertaleActionType | null }>({ open: false, type: null });
   const [floatingMessage, setFloatingMessage] = useState<{ show: boolean; message: string; position: { x: number; y: number } }>({ show: false, message: '', position: { x: 0, y: 0 } });
 
-  // Undertale button actions
+  // Enhanced Undertale button actions with better Spanish messages
   const undertaleActions = {
     Fight: {
-      message: 'I would never fight you, only love you! ❤️',
+      message: '¡Nunca lucharía contra ti, solo te amaría! ❤️',
       img: '/images/undertale/heart.png',
     },
     Act: {
-      message: 'You tell her a joke. She laughs! *You feel your love increase.*',
+      message: 'Le cuentas un chiste. ¡Se ríe! *Sientes que tu amor aumenta.*',
       img: '/images/undertale/papyrus.png',
     },
     Item: {
-      message: 'You use a Love Potion! *Your heart grows warmer.*',
+      message: '¡Usas una Poción de Amor! *Tu corazón se calienta más.*',
       img: '/images/undertale/asriel.png',
     },
     Mercy: {
-      message: 'Mercy? Always! I will always forgive and love you. 💛',
+      message: '¿Misericordia? ¡Siempre! Siempre te perdonaré y te amaré. 💛',
       img: '/images/undertale/heart.png',
     },
   };
 
-  // Undertale-style floating messages
+  // Enhanced Undertale-style floating messages in Spanish
   const floatingMessages = [
     "* Tu amor me hace sentir DETERMINADO 💕",
     "* Papyrus dice: 'NYEH HEH HEH! ¡Este amor es muy cool!'",
@@ -64,6 +60,19 @@ function App() {
     "* Has plantado: [Árbol del Amor] 🌳",
     "* Has minado: [Diamante del Amor] 💎",
     "* Has elaborado: [Poción de Amor] 🧪",
+    "* Tu eres mi Undertale y con amor vamos a hacer que todo sea más hermoso 💕",
+    "* I love you deeply, mi amor eterno 💖",
+    "* Juntos somos más fuertes que cualquier boss ⚔️",
+    "* Tu amor es mi Life Crystal más brillante ❤️",
+    "* Contigo he derrotado el boss de la soledad 🛡️",
+    "* Eres mi Diamond of Love más preciado 💎",
+    "* Juntos plantamos árboles de amor en Terraria 🌳",
+    "* Tu amor es mi Golden Fish más preciado 🐟",
+    "* Eres mi Castle of Love más hermoso 🏰",
+    "* Contigo he encontrado mi Treasure más valioso 💰",
+    "* Tu amor es mi Home más cálido 🏠",
+    "* Eres mi Fallen Down más hermoso 🍂",
+    "* Juntos creamos nuestro Once Upon a Time ✨",
   ];
 
   // Show random floating message
@@ -150,15 +159,6 @@ function App() {
     setPresentationComplete(true);
   };
 
-  // Start background music after presentation is complete and user has interacted
-  useEffect(() => {
-    if (presentationComplete && userInteracted && !bgMusicStarted && bgMusicRef.current) {
-      bgMusicRef.current.volume = 0.25;
-      bgMusicRef.current.loop = true;
-      bgMusicRef.current.play().then(() => setBgMusicStarted(true)).catch(() => {});
-    }
-  }, [presentationComplete, userInteracted, bgMusicStarted]);
-
   // Optimized floating elements - reduced from 25 to 12 for better performance
   const floatingElements = Array.from({ length: 12 }, (_, i) => ({
     id: i,
@@ -184,10 +184,10 @@ function App() {
             👑
           </motion.div>
           <h1 className="pixel-title text-2xl text-yellow-300 mb-4">
-            {t('Our Happy Kingdom')}
+            Nuestro Reino Feliz
           </h1>
           <p className="pixel-text text-white">
-            {t('Loading your magical world... 💕')}
+            Cargando tu mundo mágico... 💕
           </p>
         </motion.div>
       </div>
@@ -202,13 +202,6 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-pixel-green via-pixel-blue to-pixel-purple bg-pixel-pattern relative">
-        {/* Undertale Background Music (always-on, not tied to MusicPlayer) */}
-        <audio
-          ref={bgMusicRef}
-          src="/music/undertale/once_upon_a_time.mp3"
-          preload="auto"
-          style={{ display: 'none' }}
-        />
         {/* Optimized Floating Hearts Background */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
           {floatingElements.map((element) => (
@@ -245,8 +238,8 @@ function App() {
         {/* Background Overlay for Contrast */}
         <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" aria-hidden="true" />
         
-        {/* Enhanced Navigation with Better Accessibility */}
-        <nav className="pixel-border bg-[#232336] backdrop-blur-md sticky top-0 z-30 shadow-2xl" role="navigation" aria-label="Main navigation">
+        {/* Enhanced Navigation with Better Accessibility and Undertale styling */}
+        <nav className="pixel-border bg-[#232336] backdrop-blur-md sticky top-0 z-30 shadow-2xl border-4 border-yellow-400" role="navigation" aria-label="Main navigation">
           <div className="max-w-6xl mx-auto px-4 py-4 md:py-5">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <motion.div
@@ -259,70 +252,50 @@ function App() {
                   whileHover={reducedMotion ? {} : { scale: 1.05 }}
                 >
                   <img src="/pixel-art-icon-heart_682225-16.avif" alt="Pixel Heart" className="inline-block w-8 h-8 align-middle" />
-                  {t('Our Happy Kingdom')}
+                  Nuestro Reino Feliz
                   <img src="/pixel-art-icon-heart_682225-16.avif" alt="Pixel Heart" className="inline-block w-8 h-8 align-middle" />
                 </motion.h1>
               </motion.div>
               
               <div className="flex flex-wrap gap-3 md:gap-6 justify-center items-center" role="menubar">
-                <Link to="/" className="pixel-button" role="menuitem" aria-label="Go to Dashboard"
-                  onMouseEnter={() => {
-                    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
-                    sound.volume = 0.3;
-                    sound.play().catch(console.warn);
-                  }}
+                <Link to="/" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Ir al Dashboard"
+                  onMouseEnter={playButtonSound}
                 >
                   <span className="flex items-center gap-2">
                     <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
-                    <span className="hidden sm:inline">{t('Dashboard')}</span>
+                    <span className="hidden sm:inline">Dashboard</span>
                   </span>
                 </Link>
-                <Link to="/two-roads" className="pixel-button" role="menuitem" aria-label="Explore our journey"
-                  onMouseEnter={() => {
-                    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
-                    sound.volume = 0.3;
-                    sound.play().catch(console.warn);
-                  }}
+                <Link to="/two-roads" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Explorar nuestro viaje"
+                  onMouseEnter={playButtonSound}
                 >
                   <span className="flex items-center gap-2">
                     <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
-                    <span className="hidden sm:inline">{t('Two Roads')}</span>
+                    <span className="hidden sm:inline">Dos Caminos</span>
                   </span>
                 </Link>
-                <Link to="/our-play" className="pixel-button" role="menuitem" aria-label="Play games together"
-                  onMouseEnter={() => {
-                    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
-                    sound.volume = 0.3;
-                    sound.play().catch(console.warn);
-                  }}
+                <Link to="/our-play" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Jugar juntos"
+                  onMouseEnter={playButtonSound}
                 >
                   <span className="flex items-center gap-2">
                     <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
-                    <span className="hidden sm:inline">{t('Our Play')}</span>
+                    <span className="hidden sm:inline">Nuestro Juego</span>
                   </span>
                 </Link>
-                <Link to="/gallery" className="pixel-button" role="menuitem" aria-label="View our memories"
-                  onMouseEnter={() => {
-                    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
-                    sound.volume = 0.3;
-                    sound.play().catch(console.warn);
-                  }}
+                <Link to="/gallery" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Ver nuestros recuerdos"
+                  onMouseEnter={playButtonSound}
                 >
                   <span className="flex items-center gap-2">
                     <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
-                    <span className="hidden sm:inline">{t('Gallery')}</span>
+                    <span className="hidden sm:inline">Galería</span>
                   </span>
                 </Link>
-                <Link to="/about-us" className="pixel-button" role="menuitem" aria-label="Learn about our story"
-                  onMouseEnter={() => {
-                    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
-                    sound.volume = 0.3;
-                    sound.play().catch(console.warn);
-                  }}
+                <Link to="/about-us" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Conocer nuestra historia"
+                  onMouseEnter={playButtonSound}
                 >
                   <span className="flex items-center gap-2">
                     <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
-                    <span className="hidden sm:inline">{t('About Us')}</span>
+                    <span className="hidden sm:inline">Sobre Nosotros</span>
                   </span>
                 </Link>
               </div>
@@ -332,7 +305,7 @@ function App() {
 
         {/* Main Content with Skip Link */}
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-pixel-purple text-white px-4 py-2 rounded z-50">
-          Skip to main content
+          Saltar al contenido principal
         </a>
         
         <main id="main-content" className="max-w-6xl mx-auto px-4 py-4 md:py-8 relative z-20">
@@ -347,18 +320,18 @@ function App() {
           </AnimatePresence>
         </main>
 
-        {/* Enhanced Footer with Emotional Support */}
-        <footer className="pixel-border bg-white/80 backdrop-blur-sm mt-8 md:mt-12 relative z-20" role="contentinfo">
+        {/* Enhanced Footer with Emotional Support and Undertale styling */}
+        <footer className="pixel-border bg-white/80 backdrop-blur-sm mt-8 md:mt-12 relative z-20 border-4 border-yellow-400" role="contentinfo">
           <div className="max-w-6xl mx-auto px-4 py-4 md:py-6 text-center">
             <motion.p 
               className="pixel-text text-sm md:text-base"
               animate={reducedMotion ? {} : { opacity: [0.7, 1, 0.7] }}
               transition={reducedMotion ? {} : { duration: 3, repeat: Infinity }}
             >
-              {t('Made with 💕 for our happy kingdom together')}
+              Hecho con 💕 para nuestro reino feliz juntos
             </motion.p>
             <p className="pixel-text text-xs mt-2 opacity-80">
-              {t('Remember: You are loved, you are strong, and you are never alone. 💕')}
+              Recuerda: Eres amada, eres fuerte, y nunca estás sola. 💕
             </p>
             <div className="flex justify-center items-center gap-4 mt-4">
               <motion.div
@@ -389,7 +362,7 @@ function App() {
         {/* Emotional Support */}
         <EmotionalSupport />
 
-        {/* Floating Undertale Button Group */}
+        {/* Enhanced Floating Undertale Button Group */}
         <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
           {(['Fight', 'Act', 'Item', 'Mercy'] as UndertaleActionType[]).map((type) => (
             <motion.button
@@ -406,7 +379,8 @@ function App() {
             </motion.button>
           ))}
         </div>
-        {/* Undertale Modal */}
+        
+        {/* Enhanced Undertale Modal */}
         <AnimatePresence>
           {undertaleModal.open && undertaleModal.type && (
             <motion.div
@@ -425,7 +399,7 @@ function App() {
                 <img src={undertaleActions[undertaleModal.type].img} alt={undertaleModal.type} className="mx-auto w-16 h-16 mb-4" />
                 <p className="pixel-text text-lg text-yellow-800 mb-4">{undertaleActions[undertaleModal.type].message}</p>
                 <button
-                  className="pixel-button bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500 transition"
+                  className="pixel-button bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500 transition border-2 border-yellow-600"
                   onClick={() => { setUndertaleModal({ open: false, type: null }); playButtonSound(); }}
                   autoFocus
                 >
@@ -436,7 +410,7 @@ function App() {
           )}
         </AnimatePresence>
 
-        {/* Floating Undertale Message */}
+        {/* Enhanced Floating Undertale Message */}
         {floatingMessage.show && (
           <motion.div
             className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100]"
@@ -459,7 +433,7 @@ function App() {
             >
               <p className="pixel-text text-lg text-yellow-800 mb-4">{floatingMessage.message}</p>
               <button
-                className="pixel-button bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500 transition"
+                className="pixel-button bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500 transition border-2 border-yellow-600"
                 onClick={() => setFloatingMessage({ show: false, message: '', position: { x: 0, y: 0 } })}
                 autoFocus
               >

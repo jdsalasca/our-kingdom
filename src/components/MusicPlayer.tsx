@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
 
 interface Song {
   id: string;
@@ -8,6 +7,7 @@ interface Song {
   artist: string;
   file: string;
   emoji: string;
+  description: string;
 }
 
 interface MusicPlayerProps {
@@ -15,18 +15,18 @@ interface MusicPlayerProps {
 }
 
 const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
-  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(() => {
     const savedVolume = localStorage.getItem('music-volume');
-    return savedVolume ? parseFloat(savedVolume) : 0.3;
+    return savedVolume ? parseFloat(savedVolume) : 0.4;
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Check for reduced motion preference
@@ -40,56 +40,63 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Dynamic song list with emotional support messages
+  // Enhanced song list with emotional Spanish messages
   const songs: Song[] = [
     {
       id: '1',
       title: 'Once Upon a Time',
       artist: 'Undertale',
       file: '/music/undertale/once_upon_a_time.mp3',
-      emoji: '🎮'
+      emoji: '🎮',
+      description: 'La música que nos transporta a nuestro mundo mágico'
     },
     {
       id: '2',
       title: 'Fallen Down',
       artist: 'Undertale',
       file: '/music/undertale/fallen_down.mp3',
-      emoji: '🍂'
+      emoji: '🍂',
+      description: 'Como las hojas que caen, nuestro amor crece más fuerte'
     },
     {
       id: '3',
       title: 'Home',
       artist: 'Undertale',
       file: '/music/undertale/home.mp3',
-      emoji: '🏠'
+      emoji: '🏠',
+      description: 'Tú eres mi hogar, mi lugar seguro'
     },
     {
       id: '4',
       title: 'Die With A Smile',
       artist: 'Lady Gaga, Bruno Mars',
       file: '/music/Lady Gaga, Bruno Mars - Die With A Smile.mp3',
-      emoji: '🎵'
+      emoji: '🎵',
+      description: 'Contigo quiero morir sonriendo, mi amor'
     },
     {
       id: '5',
       title: 'Treasure',
       artist: 'Bruno Mars',
       file: '/music/Treasure - Bruno Mars HQ (Audio).mp3',
-      emoji: '💎'
+      emoji: '💎',
+      description: 'Eres mi tesoro más preciado'
     },
     {
       id: '6',
       title: 'Corazón',
       artist: 'Auténticos Decadentes',
       file: '/music/Corazón -Autenticos decadentes.mp3',
-      emoji: '❤️'
+      emoji: '❤️',
+      description: 'Tu corazón es el latido de mi vida'
     },
     {
       id: '7',
       title: 'Es Por Ti',
       artist: 'Juan',
       file: '/music/Es Por Ti - Juan.mp3',
-      emoji: '🌹'
+      emoji: '🌹',
+      description: 'Todo lo que hago es por ti, mi amor'
     }
   ];
 
@@ -103,7 +110,25 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     console.warn('Audio error:', error);
   }, []);
 
-  // Safe audio play function with user interaction check
+  // Improved autoplay with user interaction detection
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setUserInteracted(true);
+    };
+
+    const events = ['click', 'touchstart', 'keydown', 'mousedown'];
+    events.forEach(event => {
+      document.addEventListener(event, handleUserInteraction, { once: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, handleUserInteraction);
+      });
+    };
+  }, []);
+
+  // Safe audio play function with better autoplay handling
   const safePlay = useCallback(async () => {
     if (!audioRef.current) return false;
     
@@ -133,6 +158,23 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
       return false;
     }
   }, [volume, handleAudioError]);
+
+  // Enhanced autoplay logic
+  useEffect(() => {
+    const playMusic = async () => {
+      if (audioRef.current && !isPlaying && autoPlay && !hasAutoPlayed && userInteracted) {
+        const success = await safePlay();
+        if (success) {
+          setHasAutoPlayed(true);
+        }
+      }
+    };
+    
+    // Try to play after user interaction
+    if (userInteracted) {
+      playMusic();
+    }
+  }, [autoPlay, isPlaying, safePlay, hasAutoPlayed, userInteracted]);
 
   const togglePlay = useCallback(async () => {
     if (audioRef.current) {
@@ -175,39 +217,6 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     nextSong();
   }, [nextSong]);
 
-  // Auto-play music when autoPlay is enabled and not already played
-  useEffect(() => {
-    const playMusic = async () => {
-      if (audioRef.current && !isPlaying && autoPlay && !hasAutoPlayed) {
-        const success = await safePlay();
-        if (success) {
-          setHasAutoPlayed(true);
-        }
-      }
-    };
-    
-    // Try to play immediately, then retry after user interaction
-    playMusic();
-    
-    // Also try after any user interaction
-    const handleUserInteraction = () => {
-      if (!hasAutoPlayed && autoPlay) {
-        playMusic();
-      }
-    };
-
-    const events = ['click', 'touchstart', 'keydown'];
-    events.forEach(event => {
-      document.addEventListener(event, handleUserInteraction, { once: true });
-    });
-
-    return () => {
-      events.forEach(event => {
-        document.removeEventListener(event, handleUserInteraction);
-      });
-    };
-  }, [autoPlay, isPlaying, safePlay, hasAutoPlayed]);
-
   // Update volume when it changes and save to localStorage
   useEffect(() => {
     if (audioRef.current) {
@@ -238,32 +247,43 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     };
   }, []);
 
+  // Play Undertale button sound
+  const playButtonSound = () => {
+    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+    sound.volume = 0.3;
+    sound.play().catch(() => {});
+  };
+
   return (
     <>
-      {/* Floating Music Button with Accessibility */}
+      {/* Enhanced Floating Music Button with Undertale styling */}
       <motion.div
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed bottom-6 left-6 z-50"
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={reducedMotion ? {} : { type: "spring", stiffness: 260, damping: 20 }}
       >
         <motion.button
-          onClick={() => setIsOpen(!isOpen)}
-          className="pixel-button bg-gradient-to-r from-pixel-purple to-pixel-pink text-white p-4 rounded-full shadow-lg hover:shadow-xl relative"
+          onClick={() => {
+            setIsOpen(!isOpen);
+            playButtonSound();
+          }}
+          className="pixel-button bg-gradient-to-r from-pixel-purple to-pixel-pink text-white p-4 rounded-full shadow-lg hover:shadow-xl relative border-4 border-yellow-400"
           whileHover={reducedMotion ? {} : { scale: 1.1, rotate: 5 }}
           whileTap={reducedMotion ? {} : { scale: 0.9 }}
-          aria-label={isOpen ? t('Close Music Player') : t('Open Music Player')}
+          aria-label={isOpen ? 'Cerrar Reproductor de Música' : 'Abrir Reproductor de Música'}
           aria-expanded={isOpen}
+          onMouseEnter={playButtonSound}
         >
           <span className="text-2xl" aria-hidden="true">🎵</span>
           {isPlaying && (
             <motion.span
-              className="absolute -top-2 -right-2 text-pixel-yellow text-xl animate-pulse"
+              className="absolute -top-2 -right-2 text-pixel-yellow text-xl"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={reducedMotion ? {} : { opacity: [0.7, 1, 0.7], scale: [1, 1.2, 1] }}
               transition={reducedMotion ? {} : { duration: 1, repeat: Infinity }}
             >
-              <span role="img" aria-label="Music Playing">🎶</span>
+              <span role="img" aria-label="Música Reproduciéndose">🎶</span>
             </motion.span>
           )}
           {isLoading && (
@@ -278,36 +298,37 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
         </motion.button>
       </motion.div>
 
-      {/* Music Player Panel */}
+      {/* Enhanced Music Player Panel with Undertale styling */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 100, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.8 }}
-            className="fixed bottom-20 right-6 z-40"
+            className="fixed bottom-20 left-6 z-40"
             role="dialog"
-            aria-label={t('Music Player')}
+            aria-label="Reproductor de Música"
           >
-            <div className="music-player-card p-6 max-w-sm">
+            <div className="music-player-card p-6 max-w-sm border-4 border-yellow-400 bg-gradient-to-br from-purple-900 to-pink-800">
               {error && (
                 <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                   <p className="pixel-text text-sm">
-                    💕 {t('Don\'t worry! Music will be available soon. You can still enjoy our magical world together.')}
+                    💕 ¡No te preocupes! La música estará disponible pronto. Puedes seguir disfrutando de nuestro mundo mágico juntos.
                   </p>
                 </div>
               )}
               
               <div className="text-center mb-4">
                 <div className="text-4xl mb-2" aria-hidden="true">{currentSong.emoji}</div>
-                <h3 className="pixel-title text-lg">{currentSong.title}</h3>
-                <p className="pixel-text text-sm opacity-80">{currentSong.artist}</p>
+                <h3 className="pixel-title text-lg text-yellow-300">{currentSong.title}</h3>
+                <p className="pixel-text text-sm opacity-80 text-white">{currentSong.artist}</p>
+                <p className="pixel-text text-xs opacity-70 text-white mt-2">{currentSong.description}</p>
               </div>
 
-              {/* Volume Control */}
+              {/* Enhanced Volume Control */}
               <div className="mb-4">
-                <label className="pixel-text text-sm block mb-2" htmlFor="volume-control">
-                  {t('Volume')}
+                <label className="pixel-text text-sm block mb-2 text-yellow-300" htmlFor="volume-control">
+                  Volumen
                 </label>
                 <input
                   id="volume-control"
@@ -318,7 +339,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                   value={volume}
                   onChange={(e) => setVolume(parseFloat(e.target.value))}
                   className="w-full h-2 bg-pixel-purple rounded-lg appearance-none cursor-pointer"
-                  aria-label={t('Volume control')}
+                  aria-label="Control de volumen"
                 />
               </div>
 
@@ -333,41 +354,53 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                 preload="auto"
               />
 
-              {/* Controls */}
+              {/* Enhanced Controls with Undertale styling */}
               <div className="music-controls mb-4">
                 <motion.button
-                  onClick={prevSong}
-                  className="music-button bg-pixel-purple hover:bg-pixel-pink"
+                  onClick={() => {
+                    prevSong();
+                    playButtonSound();
+                  }}
+                  className="music-button bg-pixel-purple hover:bg-pixel-pink border-2 border-yellow-400"
                   whileHover={reducedMotion ? {} : { scale: 1.1 }}
                   whileTap={reducedMotion ? {} : { scale: 0.9 }}
-                  aria-label={t('Previous Song')}
+                  aria-label="Canción Anterior"
+                  onMouseEnter={playButtonSound}
                 >
                   ⏮️
                 </motion.button>
                 
                 <motion.button
-                  onClick={togglePlay}
-                  className="music-button bg-pixel-green hover:bg-pixel-yellow text-xl"
+                  onClick={() => {
+                    togglePlay();
+                    playButtonSound();
+                  }}
+                  className="music-button bg-pixel-green hover:bg-pixel-yellow text-xl border-2 border-yellow-400"
                   whileHover={reducedMotion ? {} : { scale: 1.1 }}
                   whileTap={reducedMotion ? {} : { scale: 0.9 }}
-                  aria-label={isPlaying ? t('Pause Music') : t('Play Music')}
+                  aria-label={isPlaying ? 'Pausar Música' : 'Reproducir Música'}
                   disabled={isLoading}
+                  onMouseEnter={playButtonSound}
                 >
                   {isLoading ? '⏳' : isPlaying ? '⏸️' : '▶️'}
                 </motion.button>
                 
                 <motion.button
-                  onClick={nextSong}
-                  className="music-button bg-pixel-purple hover:bg-pixel-pink"
+                  onClick={() => {
+                    nextSong();
+                    playButtonSound();
+                  }}
+                  className="music-button bg-pixel-purple hover:bg-pixel-pink border-2 border-yellow-400"
                   whileHover={reducedMotion ? {} : { scale: 1.1 }}
                   whileTap={reducedMotion ? {} : { scale: 0.9 }}
-                  aria-label={t('Next Song')}
+                  aria-label="Siguiente Canción"
+                  onMouseEnter={playButtonSound}
                 >
                   ⏭️
                 </motion.button>
               </div>
 
-              {/* Song List */}
+              {/* Enhanced Song List with Undertale styling */}
               <div className="space-y-2 max-h-32 overflow-y-auto">
                 {songs.map((song, index) => (
                   <motion.button
@@ -381,15 +414,17 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                           safePlay();
                         }
                       }
+                      playButtonSound();
                     }}
-                    className={`w-full text-left p-2 rounded pixel-text text-sm transition-colors ${
+                    className={`w-full text-left p-2 rounded pixel-text text-sm transition-colors border-2 ${
                       index === currentSongIndex
-                        ? 'bg-pixel-yellow text-pixel-purple'
-                        : 'hover:bg-pixel-purple/20'
+                        ? 'bg-pixel-yellow text-pixel-purple border-yellow-400'
+                        : 'hover:bg-pixel-purple/20 border-transparent hover:border-yellow-400 text-white'
                     }`}
                     whileHover={reducedMotion ? {} : { x: 5 }}
-                    aria-label={`${t('Play Music')} ${song.title} by ${song.artist}`}
+                    aria-label={`Reproducir ${song.title} de ${song.artist}`}
                     aria-current={index === currentSongIndex ? "true" : "false"}
+                    onMouseEnter={playButtonSound}
                   >
                     <span className="mr-2" aria-hidden="true">{song.emoji}</span>
                     {song.title}
@@ -397,10 +432,10 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                 ))}
               </div>
 
-              {/* Emotional Support Message */}
-              <div className="mt-4 p-3 bg-pink-100 border border-pink-300 rounded">
+              {/* Enhanced Emotional Support Message */}
+              <div className="mt-4 p-3 bg-pink-100 border border-pink-300 rounded border-2 border-yellow-400">
                 <p className="pixel-text text-xs text-pink-800">
-                  💕 {t('Music has the power to heal hearts and bring us closer together. You are loved.')}
+                  💕 La música tiene el poder de sanar corazones y acercarnos más. Eres amada y especial.
                 </p>
               </div>
             </div>

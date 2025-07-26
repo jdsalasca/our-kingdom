@@ -265,7 +265,7 @@ const Dashboard = () => {
           <div className="flex justify-center gap-4 text-sm text-yellow-200">
             <span>❤️ LOVE: ∞</span>
             <span>💎 DETERMINATION: MAX</span>
-            <span>🏰 TERRARIA LEVEL: 100</span>
+            <span>🏰 TERRARIA BEES: 0</span>
           </div>
         </div>
 

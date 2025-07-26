@@ -69,7 +69,7 @@
     z-index: 50;
   }
 
-  /* Enhanced Pixel Border */
+  /* Enhanced Pixel Border with Undertale styling */
   .pixel-border {
     @apply border-4 shadow-lg relative;
     border-color: #232336;
@@ -95,7 +95,7 @@
     z-index: -1;
   }
 
-  /* Enhanced Pixel Button */
+  /* Enhanced Pixel Button with Undertale styling */
   .pixel-button {
     border: 4px solid #232336;
     background: linear-gradient(135deg, #4a7c59 0%, #4a90e2 100%);
@@ -140,7 +140,7 @@
     box-shadow: 0 0 0 4px #fff, 2px 2px 0px #000, inset 2px 2px 0px rgba(255,255,255,0.3);
   }
 
-  /* Enhanced Pixel Card */
+  /* Enhanced Pixel Card with Undertale styling */
   .pixel-card {
     @apply border-4 p-6 m-4 rounded-xl shadow-lg relative overflow-hidden;
     border-color: #232336;
@@ -177,7 +177,7 @@
       inset 2px 2px 0px rgba(255, 255, 255, 0.3);
   }
 
-  /* Enhanced Text Styles */
+  /* Enhanced Text Styles with Undertale styling */
   .pixel-text {
     @apply text-black leading-relaxed;
     font-family: 'Press Start 2P', monospace;
@@ -197,6 +197,22 @@
     @apply text-lg text-center mb-4 text-orange-800;
     font-family: 'VT323', monospace;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Undertale-specific text effects */
+  .undertale-text-glow {
+    text-shadow: 
+      0 0 10px #f4d03f,
+      0 0 20px #f4d03f,
+      0 0 30px #f4d03f,
+      2px 2px 0px #000;
+  }
+
+  .undertale-border-glow {
+    box-shadow: 
+      0 0 10px #f4d03f,
+      0 0 20px #f4d03f,
+      4px 4px 0px #000;
   }
 
   /* Background Pattern */
@@ -228,6 +244,10 @@
     box-shadow: 0 0 20px rgba(74, 124, 89, 0.5);
   }
 
+  .glow-yellow {
+    box-shadow: 0 0 20px rgba(244, 208, 63, 0.5);
+  }
+
   /* Enhanced Animations */
   .animate-float {
     animation: float 3s ease-in-out infinite;
@@ -256,6 +276,20 @@
     50% {
       opacity: 1;
       transform: scale(1.2);
+    }
+  }
+
+  .animate-heart-beat {
+    animation: heartBeat 1.5s ease-in-out infinite;
+  }
+
+  @keyframes heartBeat {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
     }
   }
 
@@ -326,7 +360,7 @@
     opacity: 1;
   }
 
-  /* Enhanced Music Player Styles */
+  /* Enhanced Music Player Styles with Undertale styling */
   .music-player-card {
     background: linear-gradient(135deg, #9b59b6 0%, #e91e63 100%);
     border: 4px solid #000;
@@ -917,5 +951,17 @@
   .language-button.inactive {
     background-color: #fff;
     color: #4a7c59;
+  }
+
+  /* Undertale-specific color variables */
+  :root {
+    --undertale-yellow: #f4d03f;
+    --undertale-blue: #4a90e2;
+    --undertale-green: #4a7c59;
+    --undertale-purple: #9b59b6;
+    --undertale-pink: #e91e63;
+    --undertale-orange: #e67e22;
+    --undertale-red: #e74c3c;
+    --undertale-dark: #232336;
   }
 }

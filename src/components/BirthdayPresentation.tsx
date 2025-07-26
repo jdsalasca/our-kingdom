@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
 
 interface BirthdayPresentationProps {
   onComplete: () => void;
 }
 
 const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
-  const { t } = useTranslation();
   const [currentPhase, setCurrentPhase] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
   const [showTheatre, setShowTheatre] = useState(false);
@@ -86,7 +84,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
     onComplete();
   };
 
-  // Enhanced 26 beautiful phrases in Spanish for her 26th birthday with Undertale/Terraria references
+  // Enhanced 30 beautiful phrases in Spanish for her 26th birthday with Undertale/Terraria references
   const birthdayPhrases = [
     "Eres la luz que ilumina cada uno de mis días",
     "Tu sonrisa es el regalo más hermoso que la vida me ha dado",
@@ -117,13 +115,24 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
     "Tu eres mi Undertale y mi Terraria, mi todo 💕",
     "I love you deeply, mi amor eterno 💖",
     "Tu amor es mi DETERMINACIÓN más fuerte 💪",
-    "Eres mi LOVE infinito y mi felicidad eterna ❤️"
+    "Eres mi LOVE infinito y mi felicidad eterna ❤️",
+    "Juntos somos más fuertes que cualquier boss ⚔️",
+    "Tu amor es mi Life Crystal más brillante ❤️",
+    "Contigo he derrotado el boss de la soledad 🛡️",
+    "Eres mi Diamond of Love más preciado 💎",
+    "Juntos plantamos árboles de amor en Terraria 🌳",
+    "Tu amor es mi Golden Fish más preciado 🐟",
+    "Eres mi Castle of Love más hermoso 🏰",
+    "Contigo he encontrado mi Treasure más valioso 💰",
+    "Tu amor es mi Home más cálido 🏠",
+    "Eres mi Fallen Down más hermoso 🍂",
+    "Juntos creamos nuestro Once Upon a Time ✨"
   ];
 
-  // Undertale-style floating messages
+  // Enhanced Undertale-style floating messages in Spanish
   const undertaleMessages = [
     "* Papyrus dice: NYEH HEH HEH! ¡Este cumpleaños es muy cool! 💙",
-    "* Sans dice: heh, el amor es genial, chica. 💛",
+    "* Sans dice: 'heh, el amor es genial, chica.' 💛",
     "* Asriel envía un abrazo virtual 💙",
     "* Has encontrado: [Cristal de Amor] ❤️",
     "* Tu nivel de relación aumentó! ⬆️",
@@ -225,15 +234,15 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
           </motion.div>
           
           <h1 className="pixel-title text-4xl md:text-6xl text-yellow-300 mb-6 undertale-text-glow">
-            {t('Happy Birthday, My Love!')}
+            ¡Feliz Cumpleaños, Mi Amor!
           </h1>
           
           <p className="pixel-text text-xl md:text-2xl text-white mb-8 max-w-2xl mx-auto">
-            {t('Today you turn 26 and I want to celebrate every moment with you 💕')}
+            Hoy cumples 26 años y quiero celebrar cada momento contigo 💕
           </p>
 
           {/* Enhanced Undertale-style message */}
-          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg mb-8 max-w-lg mx-auto undertale-border-glow">
+          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg mb-8 max-w-lg mx-auto undertale-border-glow border-4 border-yellow-400">
             <p className="pixel-text text-lg text-yellow-300 mb-4">
               "Tu eres mi Undertale y con amor vamos a hacer que todo sea más hermoso y divertido"
             </p>
@@ -244,7 +253,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
 
           <motion.button
             onClick={handleStart}
-            className="pixel-button bg-gradient-to-r from-pixel-purple to-pixel-pink text-white px-8 py-4 text-xl"
+            className="pixel-button bg-gradient-to-r from-pixel-purple to-pixel-pink text-white px-8 py-4 text-xl border-4 border-yellow-400"
             whileHover={reducedMotion ? {} : { scale: 1.05, rotate: 2 }}
             whileTap={reducedMotion ? {} : { scale: 0.95 }}
             onMouseEnter={() => {
@@ -255,7 +264,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
           >
             <span className="flex items-center gap-3">
               <img src="/images/undertale/heart.png" alt="Heart" className="w-6 h-6 animate-heart-beat" />
-              {t('Start Special Celebration')}
+              Iniciar Celebración Especial
               <img src="/images/undertale/heart.png" alt="Heart" className="w-6 h-6 animate-heart-beat" />
             </span>
           </motion.button>
@@ -269,7 +278,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
               sound.play().catch(console.warn);
             }}
           >
-            {t('Skip Presentation')}
+            Saltar Presentación
           </motion.button>
         </motion.div>
 
@@ -312,11 +321,11 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
           </motion.div>
           
           <h1 className="pixel-title text-4xl md:text-6xl text-yellow-300 mb-6 undertale-text-glow">
-            {t('Welcome to Our Kingdom!')}
+            ¡Bienvenida a Nuestro Reino!
           </h1>
           
           <p className="pixel-text text-xl text-white mb-8">
-            {t('Your special music is starting... 💕')}
+            Tu música especial está comenzando... 💕
           </p>
 
           {/* Enhanced Undertale characters floating */}
@@ -363,7 +372,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
             transition={reducedMotion ? {} : { duration: 2, repeat: Infinity }}
             className="text-2xl text-yellow-300 undertale-text-glow"
           >
-            {t('Open Magic Theatre')}
+            Abrir Teatro Mágico
           </motion.div>
         </motion.div>
       </div>
@@ -484,7 +493,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
           
           <motion.button
             onClick={handleNextPhase}
-            className="pixel-button bg-gradient-to-r from-pixel-purple to-pixel-pink text-white px-6 py-3"
+            className="pixel-button bg-gradient-to-r from-pixel-purple to-pixel-pink text-white px-6 py-3 border-4 border-yellow-400"
             whileHover={reducedMotion ? {} : { scale: 1.05 }}
             whileTap={reducedMotion ? {} : { scale: 0.95 }}
             onMouseEnter={() => {
@@ -495,7 +504,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
           >
             <span className="flex items-center gap-2">
               <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5 animate-heart-beat" />
-              {t('Next')}
+              Siguiente
               <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5 animate-heart-beat" />
             </span>
           </motion.button>
