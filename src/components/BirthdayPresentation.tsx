@@ -13,25 +13,20 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
   const [showMusicButton, setShowMusicButton] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Beautiful birthday phrases like in the image
+  // Beautiful birthday phrases like in the image - Selected 26 best for 26th birthday
   const birthdayPhrases = [
     "Eres la melodía que hace que mi vida sea música",
     "Tu amor es mi Undertale más preciado 💕",
-    "Juntos hemos derrotado todos los bosses del amor ⚔️",
     "Eres mi Life Crystal más brillante ❤️",
-    "Tu amor es mi Diamond of Love más valioso 💎",
     "Has construido el castillo más hermoso en mi corazón 🏰",
     "Contigo he encontrado mi Treasure más preciado 💰",
     "Tu amor es mi Golden Fish más especial 🐟",
     "Juntos plantamos árboles de amor en Terraria 🌳",
-    "Eres mi Home más cálido y seguro 🏠",
-    "Tu amor es mi Fallen Down más hermoso 🍂",
     "Juntos creamos nuestro Once Upon a Time ✨",
     "Eres mi Corazón más latiente 💓",
     "Tu amor es mi Es Por Ti más sincero 🌹",
     "Juntos somos más fuertes que cualquier boss ⚔️",
     "Eres mi Die With A Smile más verdadero 😊",
-    "Tu amor es mi Treasure más valioso 💎",
     "Juntos hemos pescado el amor más dorado 🎣",
     "Eres mi Castle of Love más hermoso 🏰",
     "Tu amor es mi Diamond más brillante 💎",
@@ -41,34 +36,11 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
     "Juntos hemos elaborado la poción del amor más fuerte 🧪",
     "Eres mi Life Crystal más brillante ❤️",
     "Tu amor es mi Treasure más valioso 💰",
-    "Juntos hemos derrotado todos los bosses del amor ⚔️",
-    "Eres la melodía que hace que mi vida sea música",
-    "Tu amor es mi Undertale más preciado 💕",
-    "Juntos hemos derrotado todos los bosses del amor ⚔️",
-    "Eres mi Life Crystal más brillante ❤️",
+    "Juntos hemos derrotado todos los bosses ⚔️",
     "Tu amor es mi Diamond of Love más valioso 💎",
-    "Has construido el castillo más hermoso en mi corazón 🏰",
-    "Contigo he encontrado mi Treasure más preciado 💰",
-    "Tu amor es mi Golden Fish más especial 🐟",
-    "Juntos plantamos árboles de amor en Terraria 🌳",
     "Eres mi Home más cálido y seguro 🏠",
     "Tu amor es mi Fallen Down más hermoso 🍂",
-    "Juntos creamos nuestro Once Upon a Time ✨",
-    "Eres mi Corazón más latiente 💓",
-    "Tu amor es mi Es Por Ti más sincero 🌹",
-    "Juntos somos más fuertes que cualquier boss ⚔️",
-    "Eres mi Die With A Smile más verdadero 😊",
-    "Tu amor es mi Treasure más valioso 💎",
-    "Juntos hemos pescado el amor más dorado 🎣",
-    "Eres mi Castle of Love más hermoso 🏰",
-    "Tu amor es mi Diamond más brillante 💎",
-    "Juntos hemos minado el amor más puro ⛏️",
-    "Eres mi Golden Fish más preciado 🐟",
-    "Tu amor es mi Home más cálido 🏠",
-    "Juntos hemos elaborado la poción del amor más fuerte 🧪",
-    "Eres mi Life Crystal más brillante ❤️",
-    "Tu amor es mi Treasure más valioso 💰",
-    "Juntos hemos derrotado todos los bosses del amor ⚔️"
+    "Tu eres mi Undertale y con amor vamos a hacer que todo sea más hermoso 💕"
   ];
 
   // Undertale-style messages
