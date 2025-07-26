@@ -80,7 +80,6 @@ function App() {
     "* Eres mi Castle of Love más hermoso 🏰",
     "* Contigo he encontrado mi Treasure más valioso 💰",
     "* Tu amor es mi Home más cálido 🏠",
-    "* Eres mi Fallen Down más hermoso 🍂",
     "* Juntos creamos nuestro Once Upon a Time ✨",
   ];
 

@@ -68,8 +68,8 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
     "* Eres mi Castle of Love más hermoso 🏰",
     "* Contigo he encontrado mi Treasure más valioso 💰",
     "* Tu amor es mi Home más cálido 🏠",
-    "* Eres mi Fallen Down más hermoso 🍂",
-    "* Juntos creamos nuestro Once Upon a Time ✨"
+    "* Juntos creamos nuestro Once Upon a Time ✨",
+    "* Eres mi lugar feliz y siempre estaré para ti con DETERMINACIÓN 💕"
   ];
 
   // Check for reduced motion preference
