@@ -11,13 +11,18 @@ interface Song {
 }
 
 interface MusicPlayerProps {
-  autoPlay?: boolean;
+  globalMusicPlaying?: boolean;
+  globalMusicStarted?: boolean;
+  onGlobalMusicToggle?: (playing: boolean) => void;
 }
 
-const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
+const MusicPlayer = ({ 
+  globalMusicPlaying = false, 
+  globalMusicStarted = false,
+  onGlobalMusicToggle 
+}: MusicPlayerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(() => {
     const savedVolume = localStorage.getItem('music-volume');
     return savedVolume ? parseFloat(savedVolume) : 0.4;
@@ -25,14 +30,8 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
-  const [userInteracted, setUserInteracted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [autoplayAttempts, setAutoplayAttempts] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const autoplayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Enhanced song list with emotional Spanish messages
   const songs: Song[] = [
@@ -119,224 +118,19 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Enhanced visibility change detection
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsVisible(!document.hidden);
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, []);
-
   // Enhanced error handling
   const handleAudioError = useCallback((error: string) => {
     setError(error);
     setIsLoading(false);
-    setIsPlaying(false);
     console.warn('Audio error:', error);
   }, []);
 
-  // Aggressive user interaction detection
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      if (!userInteracted) {
-        setUserInteracted(true);
-        console.log('User interaction detected, attempting autoplay...');
-      }
-    };
-
-    // Comprehensive event listeners for all possible interactions
-    const events = [
-      'click', 'touchstart', 'keydown', 'mousedown', 'scroll', 'wheel',
-      'pointerdown', 'pointerup', 'pointermove', 'gesturestart', 'gesturechange',
-      'gestureend', 'touchmove', 'touchend', 'mouseenter', 'mouseleave',
-      'focus', 'blur', 'input', 'change', 'submit'
-    ];
-
-    events.forEach(event => {
-      document.addEventListener(event, handleUserInteraction, { passive: true });
-    });
-
-    // Also try to detect any DOM changes
-    const observer = new MutationObserver(() => {
-      handleUserInteraction();
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true
-    });
-
-    return () => {
-      events.forEach(event => {
-        document.removeEventListener(event, handleUserInteraction);
-      });
-      observer.disconnect();
-    };
-  }, [userInteracted]);
-
-  // Enhanced safe play function with multiple strategies
-  const safePlay = useCallback(async () => {
-    if (!audioRef.current) return false;
-    
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      // Set volume before playing
-      audioRef.current.volume = volume;
-      
-      // Strategy 1: Direct play
-      try {
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          await playPromise;
-          setIsPlaying(true);
-          setIsLoading(false);
-          setHasAutoPlayed(true);
-          console.log('Music started successfully!');
-          return true;
-        }
-      } catch {
-        console.log('Direct play failed, trying alternative strategies...');
-      }
-
-      // Strategy 2: Load and play
-      try {
-        audioRef.current.load();
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          await playPromise;
-          setIsPlaying(true);
-          setIsLoading(false);
-          setHasAutoPlayed(true);
-          console.log('Music started with load strategy!');
-          return true;
-        }
-      } catch {
-        console.log('Load strategy failed, trying user interaction...');
-      }
-
-      // Strategy 3: Try with user interaction simulation
-      if (userInteracted) {
-        try {
-          // Simulate a user interaction
-          const event = new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: true
-          });
-          document.dispatchEvent(event);
-          
-          const playPromise = audioRef.current.play();
-          if (playPromise !== undefined) {
-            await playPromise;
-            setIsPlaying(true);
-            setIsLoading(false);
-            setHasAutoPlayed(true);
-            console.log('Music started with interaction simulation!');
-            return true;
-          }
-        } catch {
-          console.log('Interaction simulation failed');
-        }
-      }
-
-      setIsLoading(false);
-      return false;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to play audio';
-      handleAudioError(errorMessage);
-      return false;
+  // Toggle global music
+  const toggleGlobalMusic = useCallback(() => {
+    if (onGlobalMusicToggle) {
+      onGlobalMusicToggle(!globalMusicPlaying);
     }
-  }, [volume, handleAudioError, userInteracted]);
-
-  // Aggressive autoplay with multiple retry strategies
-  useEffect(() => {
-    const attemptAutoplay = async () => {
-      if (audioRef.current && !isPlaying && autoPlay && !hasAutoPlayed) {
-        const success = await safePlay();
-        if (success) {
-          setHasAutoPlayed(true);
-          setAutoplayAttempts(0);
-          return;
-        }
-        
-        // Increment attempts and retry with different strategies
-        setAutoplayAttempts(prev => prev + 1);
-      }
-    };
-
-    // Clear any existing timeouts
-    if (autoplayTimeoutRef.current) {
-      clearTimeout(autoplayTimeoutRef.current);
-    }
-    if (retryTimeoutRef.current) {
-      clearTimeout(retryTimeoutRef.current);
-    }
-
-    // Initial attempt
-    if (userInteracted || isVisible) {
-      attemptAutoplay();
-    }
-
-    // Retry strategies with increasing delays
-    const retryDelays = [1000, 2000, 3000, 5000, 8000, 12000];
-    
-    retryDelays.forEach((delay, index) => {
-      autoplayTimeoutRef.current = setTimeout(() => {
-        if (!hasAutoPlayed && autoPlay && autoplayAttempts < 3) {
-          console.log(`Retry attempt ${index + 1} after ${delay}ms`);
-          attemptAutoplay();
-        }
-      }, delay);
-    });
-
-    // Continuous retry for mobile devices
-    if (isMobile && !hasAutoPlayed && autoPlay) {
-      retryTimeoutRef.current = setInterval(() => {
-        if (!isPlaying && autoplayAttempts < 5) {
-          console.log('Mobile retry attempt');
-          attemptAutoplay();
-        }
-      }, 10000); // Retry every 10 seconds on mobile
-    }
-
-    return () => {
-      if (autoplayTimeoutRef.current) {
-        clearTimeout(autoplayTimeoutRef.current);
-      }
-      if (retryTimeoutRef.current) {
-        clearInterval(retryTimeoutRef.current);
-      }
-    };
-  }, [autoPlay, isPlaying, safePlay, hasAutoPlayed, userInteracted, isVisible, isMobile, autoplayAttempts]);
-
-  // Enhanced visibility change handling
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (audioRef.current && isPlaying && !document.hidden) {
-        console.log('Page became visible, attempting to resume music...');
-        safePlay();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [isPlaying, safePlay]);
-
-  const togglePlay = useCallback(async () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        await safePlay();
-      }
-    }
-  }, [isPlaying, safePlay]);
+  }, [globalMusicPlaying, onGlobalMusicToggle]);
 
   const nextSong = useCallback(() => {
     const nextIndex = (currentSongIndex + 1) % songs.length;
@@ -345,11 +139,8 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     
     if (audioRef.current) {
       audioRef.current.load();
-      if (isPlaying) {
-        safePlay();
-      }
     }
-  }, [currentSongIndex, songs.length, isPlaying, safePlay]);
+  }, [currentSongIndex, songs.length]);
 
   const prevSong = useCallback(() => {
     const prevIndex = currentSongIndex === 0 ? songs.length - 1 : currentSongIndex - 1;
@@ -358,11 +149,8 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     
     if (audioRef.current) {
       audioRef.current.load();
-      if (isPlaying) {
-        safePlay();
-      }
     }
-  }, [currentSongIndex, songs.length, isPlaying, safePlay]);
+  }, [currentSongIndex, songs.length]);
 
   const handleSongEnd = useCallback(() => {
     nextSong();
@@ -382,12 +170,6 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.src = '';
-      }
-      if (autoplayTimeoutRef.current) {
-        clearTimeout(autoplayTimeoutRef.current);
-      }
-      if (retryTimeoutRef.current) {
-        clearInterval(retryTimeoutRef.current);
       }
     };
   }, []);
@@ -423,7 +205,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
           onMouseEnter={playButtonSound}
         >
           <span aria-hidden="true">🎵</span>
-          {isPlaying && (
+          {globalMusicPlaying && (
             <motion.span
               className="absolute -top-2 -right-2 text-pixel-yellow text-xl"
               initial={{ opacity: 0, scale: 0.8 }}
@@ -442,7 +224,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
               ⏳
             </motion.div>
           )}
-          {!isPlaying && !isLoading && !hasAutoPlayed && (
+          {!globalMusicPlaying && !isLoading && !globalMusicStarted && (
             <motion.div
               className="absolute -top-2 -right-2 text-pixel-red text-xl"
               animate={reducedMotion ? {} : { scale: [1, 1.2, 1] }}
@@ -476,7 +258,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                 </div>
               )}
               
-              {!hasAutoPlayed && !isPlaying && (
+              {!globalMusicStarted && !globalMusicPlaying && (
                 <div className="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
                   <p className="pixel-text text-sm">
                     🎵 Toca cualquier parte de la pantalla para activar la música automáticamente
@@ -515,8 +297,6 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                 ref={audioRef}
                 src={currentSong.file}
                 onEnded={handleSongEnd}
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
                 onError={() => handleAudioError('Failed to load audio file')}
                 preload="auto"
                 muted={false}
@@ -544,7 +324,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                 
                 <motion.button
                   onClick={() => {
-                    togglePlay();
+                    toggleGlobalMusic();
                     playButtonSound();
                   }}
                   className={`music-button bg-pixel-green hover:bg-pixel-yellow border-2 border-yellow-400 ${
@@ -552,12 +332,12 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                   }`}
                   whileHover={reducedMotion ? {} : { scale: 1.1 }}
                   whileTap={reducedMotion ? {} : { scale: 0.9 }}
-                  aria-label={isPlaying ? 'Pausar Música' : 'Reproducir Música'}
+                  aria-label={globalMusicPlaying ? 'Pausar Música' : 'Reproducir Música'}
                   disabled={isLoading}
                   onMouseEnter={playButtonSound}
                   style={{ touchAction: 'manipulation' }}
                 >
-                  {isLoading ? '⏳' : isPlaying ? '⏸️' : '▶️'}
+                  {isLoading ? '⏳' : globalMusicPlaying ? '⏸️' : '▶️'}
                 </motion.button>
                 
                 <motion.button
@@ -590,9 +370,6 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                       setError(null);
                       if (audioRef.current) {
                         audioRef.current.load();
-                        if (isPlaying) {
-                          safePlay();
-                        }
                       }
                       playButtonSound();
                     }}

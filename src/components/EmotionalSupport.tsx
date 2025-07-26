@@ -49,7 +49,6 @@ const EmotionalSupport = () => {
     'Juntos somos más fuertes que cualquier boss ⚔️',
     'Tu amor es mi Life Crystal ❤️',
     'Eres mi Heart Crystal eterno 💖',
-    'Contigo he derrotado la soledad 🛡️',
     'Tu amor es mi Love Potion más poderosa 🧪',
     'Eres mi Diamond of Love 💎',
     'Juntos plantamos árboles de amor 🌳',

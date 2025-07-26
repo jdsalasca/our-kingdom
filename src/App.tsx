@@ -9,7 +9,7 @@ import Gallery from './components/Gallery';
 import MusicPlayer from './components/MusicPlayer';
 import EmotionalSupport from './components/EmotionalSupport';
 import BirthdayPresentation from './components/BirthdayPresentation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +19,10 @@ function App() {
   const [userInteracted, setUserInteracted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
+  const [globalMusicStarted, setGlobalMusicStarted] = useState(false);
+  const [globalMusicPlaying, setGlobalMusicPlaying] = useState(false);
+  const [showMusicPrompt, setShowMusicPrompt] = useState(true);
+  const globalAudioRef = useRef<HTMLAudioElement>(null);
 
   // Undertale Button Modal State
   type UndertaleActionType = 'Fight' | 'Act' | 'Item' | 'Mercy';
@@ -110,6 +114,67 @@ function App() {
     sound.play().catch(() => {});
   };
 
+  // NEW APPROACH: Simple and reliable music start
+  const startMusic = async () => {
+    if (globalMusicStarted) return;
+
+    try {
+      if (globalAudioRef.current) {
+        globalAudioRef.current.volume = 0.4;
+        await globalAudioRef.current.play();
+        setGlobalMusicStarted(true);
+        setGlobalMusicPlaying(true);
+        setShowMusicPrompt(false);
+        console.log('🎵 Music started successfully!');
+      }
+    } catch (error) {
+      console.log('❌ Could not start music:', error);
+    }
+  };
+
+  // Enhanced user interaction detection - ANY interaction starts music
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      if (!userInteracted) {
+        setUserInteracted(true);
+        console.log('👆 User interaction detected!');
+        
+        // Start music immediately on ANY interaction
+        startMusic();
+      }
+    };
+
+    // Listen for ANY user interaction
+    const events = [
+      'click', 'touchstart', 'keydown', 'mousedown', 'scroll', 'wheel',
+      'pointerdown', 'pointerup', 'pointermove', 'gesturestart', 'gesturechange',
+      'gestureend', 'touchmove', 'touchend', 'mouseenter', 'mouseleave',
+      'focus', 'blur', 'input', 'change', 'submit', 'dragstart', 'drop'
+    ];
+
+    events.forEach(event => {
+      document.addEventListener(event, handleUserInteraction, { passive: true, once: false });
+    });
+
+    // Also detect any DOM changes
+    const observer = new MutationObserver(() => {
+      handleUserInteraction();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true
+    });
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, handleUserInteraction);
+      });
+      observer.disconnect();
+    };
+  }, [userInteracted]);
+
   // Check for reduced motion preference
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -141,24 +206,6 @@ function App() {
     } else {
       setPresentationComplete(true);
     }
-  }, []);
-
-  // Handle user interaction for autoplay
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      setUserInteracted(true);
-    };
-
-    const events = ['click', 'touchstart', 'keydown'];
-    events.forEach(event => {
-      document.addEventListener(event, handleUserInteraction, { once: true });
-    });
-
-    return () => {
-      events.forEach(event => {
-        document.removeEventListener(event, handleUserInteraction);
-      });
-    };
   }, []);
 
   // Simulate loading for better UX
@@ -216,6 +263,49 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-pixel-green via-pixel-blue to-pixel-purple bg-pixel-pattern relative">
+        {/* Global Background Music */}
+        <audio
+          ref={globalAudioRef}
+          src="/music/undertale/once_upon_a_time.mp3"
+          loop={true}
+          preload="auto"
+          onPlay={() => setGlobalMusicPlaying(true)}
+          onPause={() => setGlobalMusicPlaying(false)}
+          onEnded={() => setGlobalMusicPlaying(false)}
+        />
+
+        {/* PROMINENT MUSIC PROMPT - NEW FEATURE */}
+        {showMusicPrompt && !globalMusicStarted && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-yellow-400 border-4 border-yellow-600 rounded-lg p-4 shadow-2xl max-w-md mx-4"
+            style={{ touchAction: 'manipulation' }}
+          >
+            <div className="text-center">
+              <div className="text-4xl mb-2 animate-pulse">🎵</div>
+              <h3 className="pixel-title text-lg text-black mb-2">
+                ¡Toca cualquier parte para activar la música!
+              </h3>
+              <p className="pixel-text text-sm text-black mb-3">
+                La música hará que nuestro reino sea más mágico 💕
+              </p>
+              <motion.button
+                onClick={() => {
+                  startMusic();
+                  playButtonSound();
+                }}
+                className="pixel-button bg-pink-500 text-white px-6 py-2 rounded-lg hover:bg-pink-600 transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{ touchAction: 'manipulation' }}
+              >
+                🎵 Activar Música
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+
         {/* Optimized Floating Hearts Background */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
           {floatingElements.map((element) => (
@@ -443,8 +533,20 @@ function App() {
           </div>
         </footer>
 
-        {/* Music Player with Auto-play */}
-        <MusicPlayer autoPlay={presentationComplete && userInteracted} />
+        {/* Music Player with Global Music State */}
+        <MusicPlayer 
+          globalMusicPlaying={globalMusicPlaying}
+          globalMusicStarted={globalMusicStarted}
+          onGlobalMusicToggle={(playing) => {
+            if (globalAudioRef.current) {
+              if (playing) {
+                globalAudioRef.current.play();
+              } else {
+                globalAudioRef.current.pause();
+              }
+            }
+          }}
+        />
         
         {/* Emotional Support */}
         <EmotionalSupport />
