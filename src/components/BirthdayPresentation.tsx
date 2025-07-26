@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 interface BirthdayPresentationProps {
@@ -12,6 +12,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
   const [hasStarted, setHasStarted] = useState(false);
   const [showTheatre, setShowTheatre] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [showUndertaleMessage, setShowUndertaleMessage] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Check for reduced motion preference
@@ -28,16 +29,42 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
   // Start Undertale music when presentation begins
   useEffect(() => {
     if (hasStarted && audioRef.current) {
-      audioRef.current.volume = 0.3;
-      audioRef.current.play().catch(console.warn);
+      audioRef.current.volume = 0.25;
+      audioRef.current.loop = true;
+      audioRef.current.play().then(() => {
+        console.log('🎵 Undertale music started for birthday presentation!');
+      }).catch(console.warn);
     }
   }, [hasStarted]);
 
+  // Show Undertale message periodically
+  useEffect(() => {
+    if (hasStarted && !showTheatre) {
+      const messageInterval = setInterval(() => {
+        if (Math.random() < 0.3) {
+          setShowUndertaleMessage(true);
+          setTimeout(() => setShowUndertaleMessage(false), 3000);
+        }
+      }, 8000);
+
+      return () => clearInterval(messageInterval);
+    }
+  }, [hasStarted, showTheatre]);
+
   const handleStart = () => {
     setHasStarted(true);
+    // Play Undertale button sound
+    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+    sound.volume = 0.4;
+    sound.play().catch(console.warn);
   };
 
   const handleNextPhase = () => {
+    // Play Undertale button sound
+    const sound = new Audio('/music/undertale/buttons/undertale-select-sound.mp3');
+    sound.volume = 0.3;
+    sound.play().catch(console.warn);
+
     if (currentPhase < birthdayPhrases.length - 1) {
       setCurrentPhase(currentPhase + 1);
     } else {
@@ -50,7 +77,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
       setTimeout(() => {
         localStorage.setItem('initial_presentation_showed', 'true');
         onComplete();
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -59,7 +86,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
     onComplete();
   };
 
-  // 26 beautiful phrases in Spanish for her 26th birthday
+  // Enhanced 26 beautiful phrases in Spanish for her 26th birthday with Undertale/Terraria references
   const birthdayPhrases = [
     "Eres la luz que ilumina cada uno de mis días",
     "Tu sonrisa es el regalo más hermoso que la vida me ha dado",
@@ -86,15 +113,50 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
     "Tu presencia hace que cada día sea una celebración",
     "Eres la razón por la que mi corazón late con alegría",
     "Contigo he descubierto que el amor es la respuesta a todo",
-    "Tu amor es el regalo más hermoso que he recibido"
+    "Tu amor es el regalo más hermoso que he recibido",
+    "Tu eres mi Undertale y mi Terraria, mi todo 💕",
+    "I love you deeply, mi amor eterno 💖",
+    "Tu amor es mi DETERMINACIÓN más fuerte 💪",
+    "Eres mi LOVE infinito y mi felicidad eterna ❤️"
+  ];
+
+  // Undertale-style floating messages
+  const undertaleMessages = [
+    "* Papyrus dice: NYEH HEH HEH! ¡Este cumpleaños es muy cool! 💙",
+    "* Sans dice: heh, el amor es genial, chica. 💛",
+    "* Asriel envía un abrazo virtual 💙",
+    "* Has encontrado: [Cristal de Amor] ❤️",
+    "* Tu nivel de relación aumentó! ⬆️",
+    "* Has desbloqueado: [Felicidad Eterna] ✨",
+    "* Te sientes cálido y feliz por dentro 🌟",
+    "* Tu alma brilla más fuerte! 💫",
+    "* Has derrotado: [Boss de la Soledad] ⚔️",
+    "* Has construido: [Castillo del Amor] 🏰",
+    "* Has pescado: [Pez Dorado del Amor] 🐟",
+    "* Has plantado: [Árbol del Amor] 🌳",
+    "* Has minado: [Diamante del Amor] 💎",
+    "* Has elaborado: [Poción de Amor] 🧪",
+    "* Tu eres mi Undertale y con amor vamos a hacer que todo sea más hermoso y divertido 💕",
+    "* I love you deeply, mi amor eterno 💖",
+    "* Juntos somos más fuertes que cualquier boss ⚔️",
+    "* Tu amor es mi Life Crystal más brillante ❤️",
+    "* Contigo he derrotado el boss de la soledad 🛡️",
+    "* Eres mi Diamond of Love más preciado 💎",
+    "* Juntos plantamos árboles de amor en Terraria 🌳",
+    "* Tu amor es mi Golden Fish más preciado 🐟",
+    "* Eres mi Castle of Love más hermoso 🏰",
+    "* Contigo he encontrado mi Treasure más valioso 💰",
+    "* Tu amor es mi Home más cálido 🏠",
+    "* Eres mi Fallen Down más hermoso 🍂",
+    "* Juntos creamos nuestro Once Upon a Time ✨",
   ];
 
   if (!hasStarted) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
-        {/* Undertale-style background with floating hearts */}
+        {/* Enhanced Undertale-style background with floating hearts and characters */}
         <div className="absolute inset-0">
-          {Array.from({ length: 20 }, (_, i) => (
+          {Array.from({ length: 15 }, (_, i) => (
             <motion.div
               key={i}
               className="absolute"
@@ -103,23 +165,50 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
                 top: `${Math.random() * 100}%`,
               }}
               animate={reducedMotion ? {} : {
-                y: [0, -50, 0],
-                opacity: [0.3, 0.8, 0.3],
-                scale: [1, 1.2, 1],
+                y: [0, -30, 0],
+                opacity: [0.3, 0.6, 0.3],
               }}
               transition={reducedMotion ? {} : {
-                duration: 3 + Math.random() * 2,
+                duration: 4 + Math.random() * 2,
                 repeat: Infinity,
                 delay: Math.random() * 2,
               }}
             >
               <img 
-                src="/images/undertale/heart.png" 
+                src={i % 2 === 0 ? "/images/undertale/heart.png" : "/images/undertale/red_heart.png"}
                 alt="Undertale Heart" 
                 className="w-8 h-8"
               />
             </motion.div>
           ))}
+        </div>
+
+        {/* Floating Undertale characters - simplified */}
+        <div className="absolute inset-0 pointer-events-none">
+          <motion.img
+            src="/images/undertale/papyrus.png"
+            alt="Papyrus"
+            className="absolute w-16 h-16 opacity-50"
+            style={{ left: '10%', top: '20%' }}
+            animate={reducedMotion ? {} : { y: [0, -8, 0] }}
+            transition={reducedMotion ? {} : { duration: 4, repeat: Infinity }}
+          />
+          <motion.img
+            src="/images/undertale/sans.´png.png"
+            alt="Sans"
+            className="absolute w-16 h-16 opacity-50"
+            style={{ right: '15%', top: '30%' }}
+            animate={reducedMotion ? {} : { y: [0, -6, 0] }}
+            transition={reducedMotion ? {} : { duration: 3, repeat: Infinity, delay: 1 }}
+          />
+          <motion.img
+            src="/images/undertale/asriel.png"
+            alt="Asriel"
+            className="absolute w-14 h-14 opacity-40"
+            style={{ right: '25%', bottom: '20%' }}
+            animate={reducedMotion ? {} : { y: [0, -8, 0] }}
+            transition={reducedMotion ? {} : { duration: 5, repeat: Infinity, delay: 0.5 }}
+          />
         </div>
 
         <motion.div
@@ -135,7 +224,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
             👑
           </motion.div>
           
-          <h1 className="pixel-title text-4xl md:text-6xl text-yellow-300 mb-6">
+          <h1 className="pixel-title text-4xl md:text-6xl text-yellow-300 mb-6 undertale-text-glow">
             {t('Happy Birthday, My Love!')}
           </h1>
           
@@ -143,8 +232,8 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
             {t('Today you turn 26 and I want to celebrate every moment with you 💕')}
           </p>
 
-          {/* Undertale-style message */}
-          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg mb-8 max-w-lg mx-auto">
+          {/* Enhanced Undertale-style message */}
+          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg mb-8 max-w-lg mx-auto undertale-border-glow">
             <p className="pixel-text text-lg text-yellow-300 mb-4">
               "Tu eres mi Undertale y con amor vamos a hacer que todo sea más hermoso y divertido"
             </p>
@@ -165,9 +254,9 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
             }}
           >
             <span className="flex items-center gap-3">
-              <img src="/images/undertale/heart.png" alt="Heart" className="w-6 h-6" />
+              <img src="/images/undertale/heart.png" alt="Heart" className="w-6 h-6 animate-heart-beat" />
               {t('Start Special Celebration')}
-              <img src="/images/undertale/heart.png" alt="Heart" className="w-6 h-6" />
+              <img src="/images/undertale/heart.png" alt="Heart" className="w-6 h-6 animate-heart-beat" />
             </span>
           </motion.button>
 
@@ -193,7 +282,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
   if (showTheatre) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
-        {/* Theatre curtains effect */}
+        {/* Enhanced theatre curtains effect */}
         <motion.div
           initial={{ y: '-100%' }}
           animate={{ y: 0 }}
@@ -222,7 +311,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
             👑
           </motion.div>
           
-          <h1 className="pixel-title text-4xl md:text-6xl text-yellow-300 mb-6">
+          <h1 className="pixel-title text-4xl md:text-6xl text-yellow-300 mb-6 undertale-text-glow">
             {t('Welcome to Our Kingdom!')}
           </h1>
           
@@ -230,35 +319,49 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
             {t('Your special music is starting... 💕')}
           </p>
 
-          {/* Undertale characters floating */}
+          {/* Enhanced Undertale characters floating */}
           <div className="flex justify-center gap-8 mb-8">
             <motion.img
               src="/images/undertale/papyrus.png"
               alt="Papyrus"
               className="w-16 h-16"
-              animate={reducedMotion ? {} : { y: [0, -10, 0] }}
+              animate={reducedMotion ? {} : { y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
               transition={reducedMotion ? {} : { duration: 2, repeat: Infinity }}
             />
             <motion.img
               src="/images/undertale/sans.´png.png"
               alt="Sans"
               className="w-16 h-16"
-              animate={reducedMotion ? {} : { y: [0, -10, 0] }}
+              animate={reducedMotion ? {} : { y: [0, -10, 0], rotate: [0, -3, 3, 0] }}
               transition={reducedMotion ? {} : { duration: 2, repeat: Infinity, delay: 0.5 }}
             />
             <motion.img
               src="/images/undertale/undertale_kid.png"
               alt="Undertale Kid"
               className="w-16 h-16"
-              animate={reducedMotion ? {} : { y: [0, -10, 0] }}
+              animate={reducedMotion ? {} : { y: [0, -10, 0], scale: [1, 1.1, 1] }}
               transition={reducedMotion ? {} : { duration: 2, repeat: Infinity, delay: 1 }}
+            />
+            <motion.img
+              src="/images/undertale/dog.png"
+              alt="Dog"
+              className="w-14 h-14"
+              animate={reducedMotion ? {} : { y: [0, -8, 0], rotate: [0, 10, -10, 0] }}
+              transition={reducedMotion ? {} : { duration: 1.5, repeat: Infinity, delay: 1.5 }}
+            />
+            <motion.img
+              src="/images/undertale/asriel.png"
+              alt="Asriel"
+              className="w-16 h-16"
+              animate={reducedMotion ? {} : { y: [0, -12, 0], scale: [1, 1.05, 1] }}
+              transition={reducedMotion ? {} : { duration: 3, repeat: Infinity, delay: 0.8 }}
             />
           </div>
 
           <motion.div
             animate={reducedMotion ? {} : { scale: [1, 1.1, 1] }}
             transition={reducedMotion ? {} : { duration: 2, repeat: Infinity }}
-            className="text-2xl text-yellow-300"
+            className="text-2xl text-yellow-300 undertale-text-glow"
           >
             {t('Open Magic Theatre')}
           </motion.div>
@@ -269,9 +372,9 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
-      {/* Undertale-style background */}
+      {/* Enhanced Undertale-style background */}
       <div className="absolute inset-0">
-        {Array.from({ length: 15 }, (_, i) => (
+        {Array.from({ length: 12 }, (_, i) => (
           <motion.div
             key={i}
             className="absolute"
@@ -280,24 +383,41 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
               top: `${Math.random() * 100}%`,
             }}
             animate={reducedMotion ? {} : {
-              y: [0, -30, 0],
-              opacity: [0.4, 0.9, 0.4],
-              scale: [1, 1.3, 1],
+              y: [0, -20, 0],
+              opacity: [0.4, 0.7, 0.4],
             }}
             transition={reducedMotion ? {} : {
-              duration: 4 + Math.random() * 2,
+              duration: 5 + Math.random() * 2,
               repeat: Infinity,
               delay: Math.random() * 3,
             }}
           >
             <img 
-              src="/images/undertale/heart.png" 
+              src={i % 2 === 0 ? "/images/undertale/heart.png" : "/images/undertale/red_heart.png"}
               alt="Undertale Heart" 
               className="w-6 h-6"
             />
           </motion.div>
         ))}
       </div>
+
+      {/* Floating Undertale message */}
+      <AnimatePresence>
+        {showUndertaleMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-1/4 left-1/2 transform -translate-x-1/2 z-20"
+          >
+            <div className="bg-white/90 rounded-lg shadow-2xl p-4 max-w-sm text-center border-4 border-yellow-400">
+              <p className="pixel-text text-lg text-yellow-800">
+                {undertaleMessages[Math.floor(Math.random() * undertaleMessages.length)]}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <motion.div
         key={currentPhase}
@@ -315,7 +435,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
           💕
         </motion.div>
         
-        <h2 className="pixel-title text-3xl md:text-4xl text-yellow-300 mb-8">
+        <h2 className="pixel-title text-3xl md:text-4xl text-yellow-300 mb-8 undertale-text-glow">
           {birthdayPhrases[currentPhase]}
         </h2>
         
@@ -324,22 +444,36 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
             src="/images/undertale/papyrus.png"
             alt="Papyrus"
             className="w-12 h-12"
-            animate={reducedMotion ? {} : { rotate: [0, 5, -5, 0] }}
+            animate={reducedMotion ? {} : { rotate: [0, 5, -5, 0], y: [0, -5, 0] }}
             transition={reducedMotion ? {} : { duration: 3, repeat: Infinity }}
           />
           <motion.img
             src="/images/undertale/sans.´png.png"
             alt="Sans"
             className="w-12 h-12"
-            animate={reducedMotion ? {} : { rotate: [0, -5, 5, 0] }}
+            animate={reducedMotion ? {} : { rotate: [0, -5, 5, 0], y: [0, -3, 0] }}
             transition={reducedMotion ? {} : { duration: 3, repeat: Infinity, delay: 1 }}
           />
           <motion.img
             src="/images/undertale/undertale_kid.png"
             alt="Undertale Kid"
             className="w-12 h-12"
-            animate={reducedMotion ? {} : { rotate: [0, 3, -3, 0] }}
+            animate={reducedMotion ? {} : { rotate: [0, 3, -3, 0], y: [0, -4, 0] }}
             transition={reducedMotion ? {} : { duration: 3, repeat: Infinity, delay: 2 }}
+          />
+          <motion.img
+            src="/images/undertale/dog.png"
+            alt="Dog"
+            className="w-10 h-10"
+            animate={reducedMotion ? {} : { rotate: [0, 10, -10, 0], y: [0, -2, 0] }}
+            transition={reducedMotion ? {} : { duration: 2, repeat: Infinity, delay: 0.5 }}
+          />
+          <motion.img
+            src="/images/undertale/asriel.png"
+            alt="Asriel"
+            className="w-12 h-12"
+            animate={reducedMotion ? {} : { scale: [1, 1.1, 1], y: [0, -6, 0] }}
+            transition={reducedMotion ? {} : { duration: 4, repeat: Infinity, delay: 1.5 }}
           />
         </div>
 
@@ -360,9 +494,9 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
             }}
           >
             <span className="flex items-center gap-2">
-              <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+              <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5 animate-heart-beat" />
               {t('Next')}
-              <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+              <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5 animate-heart-beat" />
             </span>
           </motion.button>
         </div>

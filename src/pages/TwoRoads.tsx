@@ -108,7 +108,7 @@ const TwoRoads = () => {
 
       <div className='text-center mb-12'>
         <h1 className='pixel-title text-5xl md:text-7xl mb-6'>
-          🛤️ {t('Two Roads, One Destiny')} 🛤️
+           {t('Two Roads, One Destiny')} 
         </h1>
         <p className='pixel-subtitle text-xl mb-4'>
           {t('Our paths crossed and created something magical...')}
