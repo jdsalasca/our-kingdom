@@ -13,7 +13,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
   const [showMusicButton, setShowMusicButton] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Beautiful birthday phrases like in the image - Selected 26 best for 26th birthday
+  // Beautiful birthday phrases - Selected 26 unique and meaningful for 26th birthday
   const birthdayPhrases = [
     "Eres la melodía que hace que mi vida sea música",
     "Tu amor es mi Undertale más preciado 💕",
@@ -43,7 +43,7 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
     "Tu eres mi Undertale y con amor vamos a hacer que todo sea más hermoso 💕"
   ];
 
-  // Undertale-style messages
+  // Undertale-style messages - Cleaned up and unique
   const undertaleMessages = [
     "* Tu amor me hace sentir DETERMINADO 💕",
     "* Papyrus dice: 'NYEH HEH HEH! ¡Este cumpleaños es muy cool!'",
@@ -59,7 +59,6 @@ const BirthdayPresentation = ({ onComplete }: BirthdayPresentationProps) => {
     "* Has plantado: [Árbol del Amor] 🌳",
     "* Has minado: [Diamante del Amor] 💎",
     "* Has elaborado: [Poción de Amor] 🧪",
-    "* Tu eres mi Undertale y con amor vamos a hacer que todo sea más hermoso 💕",
     "* I love you deeply, mi amor eterno 💖",
     "* Juntos somos más fuertes que cualquier boss ⚔️",
     "* Tu amor es mi Life Crystal más brillante ❤️",

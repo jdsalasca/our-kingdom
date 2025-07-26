@@ -9,7 +9,7 @@ const TwoRoads = () => {
   const [undertaleMessage, setUndertaleMessage] = useState<string>('');
   const [showCharacter, setShowCharacter] = useState<{ show: boolean; name: string; message: string }>({ show: false, name: '', message: '' });
 
-  // Undertale-style journey messages
+  // Undertale-style journey messages - Cleaned up and unique
   const journeyMessages = [
     "* You feel determination flowing through you...",
     "* Your LOVE increases as you walk together!",

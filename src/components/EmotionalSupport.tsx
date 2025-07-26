@@ -17,7 +17,7 @@ const EmotionalSupport = () => {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Enhanced emotional support messages in Spanish with Undertale/Terraria references
+  // Enhanced emotional support messages - Cleaned up and unique
   const messages = [
     'Eres mi DETERMINACIÓN 💕',
     'Tu amor es mi LOVE infinito ❤️',
@@ -44,21 +44,13 @@ const EmotionalSupport = () => {
     'Tu presencia hace cada día una celebración 🎉',
     'Eres la razón por la que mi corazón late con alegría 💓',
     'Contigo he descubierto que el amor es la respuesta 🌟',
-    'Tu amor es el regalo más hermoso que he recibido 💝',
     'Eres mi Undertale y mi Terraria 💎',
-    'Juntos somos más fuertes que cualquier boss ⚔️',
     'Tu amor es mi Life Crystal ❤️',
     'Eres mi Heart Crystal eterno 💖',
     'Tu amor es mi Love Potion más poderosa 🧪',
-    'Eres mi Diamond of Love 💎',
     'Juntos plantamos árboles de amor 🌳',
-    'Tu amor es mi Golden Fish más preciado 🐟',
-    'Eres mi Castle of Love más hermoso 🏰',
     'Contigo he encontrado mi Treasure más valioso 💰',
-    'Tu amor es mi Home más cálido 🏠',
-    'Eres mi Fallen Down más hermoso 🍂',
     'Juntos creamos nuestro Once Upon a Time ✨',
-    'Tu eres mi Undertale y con amor vamos a hacer que todo sea más hermoso y divertido 💕',
     'I love you deeply, mi amor eterno 💖',
     'Tu amor es mi DETERMINACIÓN más fuerte 💪',
     'Eres mi LOVE infinito y mi felicidad eterna ❤️',

@@ -32,35 +32,38 @@ function App() {
   // Enhanced Undertale button actions with better Spanish messages
   const undertaleActions = {
     Fight: {
-      message: '¡Nunca lucharía contra ti, solo te amaría! ❤️',
-      img: '/images/undertale/heart.png',
+      title: "Luchar",
+      message: "* Te sientes DETERMINADO! Tu amor te hace más fuerte! 💪",
+      color: "bg-red-500",
+      img: '/images/undertale/heart.png'
     },
     Act: {
-      message: 'Le cuentas un chiste. ¡Se ríe! *Sientes que tu amor aumenta.*',
-      img: '/images/undertale/papyrus.png',
+      title: "Actuar", 
+      message: "* Le das un abrazo. Tu amor es más fuerte que cualquier batalla! 💕",
+      color: "bg-blue-500",
+      img: '/images/undertale/papyrus.png'
     },
     Item: {
-      message: '¡Usas una Poción de Amor! *Tu corazón se calienta más.*',
-      img: '/images/undertale/asriel.png',
+      title: "Objeto",
+      message: "* Usas: [Cristal de Amor] ❤️ Tu amor te cura completamente!",
+      color: "bg-green-500",
+      img: '/images/undertale/asriel.png'
     },
     Mercy: {
-      message: '¿Misericordia? ¡Siempre! Siempre te perdonaré y te amaré. 💛',
-      img: '/images/undertale/heart.png',
-    },
+      title: "Misericordia",
+      message: "* El amor siempre gana. Juntos son invencibles! ✨",
+      color: "bg-purple-500",
+      img: '/images/undertale/heart.png'
+    }
   };
 
-  // Enhanced Undertale-style floating messages in Spanish
+  // Cleaned up floating messages - unique and diverse
   const floatingMessages = [
-    "* Tu amor me hace sentir DETERMINADO 💕",
-    "* Papyrus dice: 'NYEH HEH HEH! ¡Este amor es muy cool!'",
-    "* Sans dice: 'heh, el amor es genial, chica.'",
-    "* Asriel envía un abrazo virtual 💙",
     "* Has encontrado: [Cristal de Amor] ❤️",
     "* Tu nivel de relación aumentó! ⬆️",
     "* Has desbloqueado: [Felicidad Eterna] ✨",
     "* Te sientes cálido y feliz por dentro 🌟",
     "* Tu alma brilla más fuerte! 💫",
-    "* Has derrotado: [Boss de la Soledad] ⚔️",
     "* Has construido: [Castillo del Amor] 🏰",
     "* Has pescado: [Pez Dorado del Amor] 🐟",
     "* Has plantado: [Árbol del Amor] 🌳",

@@ -33,7 +33,7 @@ const MusicPlayer = ({
   const [isMobile, setIsMobile] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Enhanced song list with emotional Spanish messages
+  // Enhanced song list with emotional Spanish messages - Cleaned up and unique
   const songs: Song[] = [
     {
       id: '1',

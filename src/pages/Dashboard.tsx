@@ -22,7 +22,7 @@ const Dashboard = () => {
   const [showLoveLetter, setShowLoveLetter] = useState(false);
   const [showSurprise, setShowSurprise] = useState(false);
 
-  // Undertale-style random messages and effects
+  // Undertale-style random messages - Cleaned up and unique
   const undertaleMessages = [
     "* You feel your heart beating faster...",
     "* Papyrus is watching you with spaghetti.",
