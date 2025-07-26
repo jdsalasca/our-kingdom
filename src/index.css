@@ -8,6 +8,9 @@
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
+    /* Prevent zoom on mobile */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
   }
 
   body {
@@ -17,6 +20,9 @@
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+    /* Better touch handling */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   * {
@@ -40,6 +46,17 @@
 
   ::-webkit-scrollbar-thumb:hover {
     background: #5a8c69;
+  }
+
+  /* Mobile-specific improvements */
+  @media (max-width: 768px) {
+    html {
+      font-size: 14px;
+    }
+    
+    body {
+      font-size: 14px;
+    }
   }
 }
 
@@ -95,7 +112,7 @@
     z-index: -1;
   }
 
-  /* Enhanced Pixel Button with Undertale styling */
+  /* Enhanced Pixel Button with mobile touch support */
   .pixel-button {
     border: 4px solid #232336;
     background: linear-gradient(135deg, #4a7c59 0%, #4a90e2 100%);
@@ -112,7 +129,13 @@
     transition: all 0.15s, box-shadow 0.2s;
     text-shadow: 1px 1px 0 #232336, 2px 2px 0 #000;
     z-index: 1;
+    /* Mobile touch improvements */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
+    min-width: 44px;
   }
+  
   .pixel-button:hover {
     background: linear-gradient(135deg, #e91e63 0%, #9b59b6 100%);
     color: #fff;
@@ -120,6 +143,7 @@
     transform: translateY(-2px) scale(1.04);
     z-index: 2;
   }
+  
   .pixel-button:active {
     background: linear-gradient(135deg, #f4d03f 0%, #e67e22 100%);
     color: #232336;
@@ -127,17 +151,29 @@
     transform: scale(0.97);
     z-index: 2;
   }
+  
   .pixel-button:focus {
     outline: 2px dashed #f4d03f;
     outline-offset: 3px;
     box-shadow: 0 0 0 4px #f4d03f, 0 0 8px #f4d03f, 4px 4px 0px #000;
     z-index: 3;
   }
+  
   .pixel-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
     box-shadow: 0 0 0 4px #fff, 2px 2px 0px #000, inset 2px 2px 0px rgba(255,255,255,0.3);
+  }
+
+  /* Mobile-specific button styles */
+  @media (max-width: 768px) {
+    .pixel-button {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      min-height: 48px;
+      min-width: 48px;
+    }
   }
 
   /* Enhanced Pixel Card with Undertale styling */
@@ -166,6 +202,13 @@
       0 0 0 4px #fff,
       6px 6px 0px #000,
       0 0 20px rgba(233, 30, 99, 0.3);
+  }
+
+  /* Mobile card adjustments */
+  @media (max-width: 768px) {
+    .pixel-card {
+      @apply p-4 m-2;
+    }
   }
 
   /* Enhanced Pixel Window */
@@ -197,6 +240,21 @@
     @apply text-lg text-center mb-4 text-orange-800;
     font-family: 'VT323', monospace;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Mobile text adjustments */
+  @media (max-width: 768px) {
+    .pixel-title {
+      @apply text-xl mb-4;
+    }
+    
+    .pixel-subtitle {
+      @apply text-base mb-3;
+    }
+    
+    .pixel-text {
+      font-size: 0.875rem;
+    }
   }
 
   /* Undertale-specific text effects */
@@ -360,7 +418,20 @@
     opacity: 1;
   }
 
-  /* Enhanced Music Player Styles with Undertale styling */
+  /* Mobile gallery adjustments */
+  @media (max-width: 768px) {
+    .gallery-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+  }
+
+  /* Enhanced Music Player Styles with mobile responsiveness */
   .music-player-card {
     background: linear-gradient(135deg, #9b59b6 0%, #e91e63 100%);
     border: 4px solid #000;
@@ -397,6 +468,11 @@
       3px 3px 0px #000,
       inset 2px 2px 0px rgba(255,255,255,0.3);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Mobile touch improvements */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
+    min-width: 44px;
   }
 
   .music-button:hover {
@@ -408,12 +484,23 @@
       inset 2px 2px 0px rgba(255,255,255,0.3);
   }
 
-  /* Volume Slider Styling */
+  /* Mobile music button adjustments */
+  @media (max-width: 768px) {
+    .music-button {
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 1rem;
+    }
+  }
+
+  /* Volume Slider Styling with mobile improvements */
   input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
     cursor: pointer;
+    /* Mobile touch improvements */
+    touch-action: manipulation;
   }
 
   input[type="range"]::-webkit-slider-track {
@@ -441,6 +528,14 @@
     transform: scale(1.1);
   }
 
+  /* Mobile slider adjustments */
+  @media (max-width: 768px) {
+    input[type="range"]::-webkit-slider-thumb {
+      height: 24px;
+      width: 24px;
+    }
+  }
+
   /* Enhanced Modal Styles */
   .pixel-modal {
     background: linear-gradient(135deg, #232336 0%, #4a7c59 100%);
@@ -450,6 +545,14 @@
       8px 8px 0px #000,
       0 0 30px rgba(233, 30, 99, 0.4),
       inset 2px 2px 0px rgba(255,255,255,0.3);
+  }
+
+  /* Mobile modal adjustments */
+  @media (max-width: 768px) {
+    .pixel-modal {
+      margin: 1rem;
+      max-width: calc(100vw - 2rem);
+    }
   }
 
   /* Sprite Styles */

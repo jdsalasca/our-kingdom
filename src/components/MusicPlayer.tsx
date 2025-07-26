@@ -27,18 +27,12 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
   const [userInteracted, setUserInteracted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [autoplayAttempts, setAutoplayAttempts] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
-
-  // Check for reduced motion preference
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReducedMotion(mediaQuery.matches);
-    
-    const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mediaQuery.addEventListener('change', handleChange);
-    
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  const autoplayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Enhanced song list with emotional Spanish messages
   const songs: Song[] = [
@@ -102,6 +96,39 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
 
   const currentSong = songs[currentSongIndex];
 
+  // Check for reduced motion preference
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mediaQuery.matches);
+    
+    const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Enhanced visibility change detection
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
   // Enhanced error handling
   const handleAudioError = useCallback((error: string) => {
     setError(error);
@@ -110,25 +137,47 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     console.warn('Audio error:', error);
   }, []);
 
-  // Improved autoplay with user interaction detection
+  // Aggressive user interaction detection
   useEffect(() => {
     const handleUserInteraction = () => {
-      setUserInteracted(true);
+      if (!userInteracted) {
+        setUserInteracted(true);
+        console.log('User interaction detected, attempting autoplay...');
+      }
     };
 
-    const events = ['click', 'touchstart', 'keydown', 'mousedown'];
+    // Comprehensive event listeners for all possible interactions
+    const events = [
+      'click', 'touchstart', 'keydown', 'mousedown', 'scroll', 'wheel',
+      'pointerdown', 'pointerup', 'pointermove', 'gesturestart', 'gesturechange',
+      'gestureend', 'touchmove', 'touchend', 'mouseenter', 'mouseleave',
+      'focus', 'blur', 'input', 'change', 'submit'
+    ];
+
     events.forEach(event => {
-      document.addEventListener(event, handleUserInteraction, { once: true });
+      document.addEventListener(event, handleUserInteraction, { passive: true });
+    });
+
+    // Also try to detect any DOM changes
+    const observer = new MutationObserver(() => {
+      handleUserInteraction();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true
     });
 
     return () => {
       events.forEach(event => {
         document.removeEventListener(event, handleUserInteraction);
       });
+      observer.disconnect();
     };
-  }, []);
+  }, [userInteracted]);
 
-  // Safe audio play function with better autoplay handling
+  // Enhanced safe play function with multiple strategies
   const safePlay = useCallback(async () => {
     if (!audioRef.current) return false;
     
@@ -139,17 +188,62 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
       // Set volume before playing
       audioRef.current.volume = volume;
       
-      // Try to play
-      const playPromise = audioRef.current.play();
-      
-      if (playPromise !== undefined) {
-        await playPromise;
-        setIsPlaying(true);
-        setIsLoading(false);
-        setHasAutoPlayed(true);
-        return true;
+      // Strategy 1: Direct play
+      try {
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+          setIsPlaying(true);
+          setIsLoading(false);
+          setHasAutoPlayed(true);
+          console.log('Music started successfully!');
+          return true;
+        }
+      } catch {
+        console.log('Direct play failed, trying alternative strategies...');
       }
-      
+
+      // Strategy 2: Load and play
+      try {
+        audioRef.current.load();
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+          setIsPlaying(true);
+          setIsLoading(false);
+          setHasAutoPlayed(true);
+          console.log('Music started with load strategy!');
+          return true;
+        }
+      } catch {
+        console.log('Load strategy failed, trying user interaction...');
+      }
+
+      // Strategy 3: Try with user interaction simulation
+      if (userInteracted) {
+        try {
+          // Simulate a user interaction
+          const event = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true
+          });
+          document.dispatchEvent(event);
+          
+          const playPromise = audioRef.current.play();
+          if (playPromise !== undefined) {
+            await playPromise;
+            setIsPlaying(true);
+            setIsLoading(false);
+            setHasAutoPlayed(true);
+            console.log('Music started with interaction simulation!');
+            return true;
+          }
+        } catch {
+          console.log('Interaction simulation failed');
+        }
+      }
+
       setIsLoading(false);
       return false;
     } catch (err) {
@@ -157,24 +251,81 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
       handleAudioError(errorMessage);
       return false;
     }
-  }, [volume, handleAudioError]);
+  }, [volume, handleAudioError, userInteracted]);
 
-  // Enhanced autoplay logic
+  // Aggressive autoplay with multiple retry strategies
   useEffect(() => {
-    const playMusic = async () => {
-      if (audioRef.current && !isPlaying && autoPlay && !hasAutoPlayed && userInteracted) {
+    const attemptAutoplay = async () => {
+      if (audioRef.current && !isPlaying && autoPlay && !hasAutoPlayed) {
         const success = await safePlay();
         if (success) {
           setHasAutoPlayed(true);
+          setAutoplayAttempts(0);
+          return;
         }
+        
+        // Increment attempts and retry with different strategies
+        setAutoplayAttempts(prev => prev + 1);
       }
     };
-    
-    // Try to play after user interaction
-    if (userInteracted) {
-      playMusic();
+
+    // Clear any existing timeouts
+    if (autoplayTimeoutRef.current) {
+      clearTimeout(autoplayTimeoutRef.current);
     }
-  }, [autoPlay, isPlaying, safePlay, hasAutoPlayed, userInteracted]);
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+    }
+
+    // Initial attempt
+    if (userInteracted || isVisible) {
+      attemptAutoplay();
+    }
+
+    // Retry strategies with increasing delays
+    const retryDelays = [1000, 2000, 3000, 5000, 8000, 12000];
+    
+    retryDelays.forEach((delay, index) => {
+      autoplayTimeoutRef.current = setTimeout(() => {
+        if (!hasAutoPlayed && autoPlay && autoplayAttempts < 3) {
+          console.log(`Retry attempt ${index + 1} after ${delay}ms`);
+          attemptAutoplay();
+        }
+      }, delay);
+    });
+
+    // Continuous retry for mobile devices
+    if (isMobile && !hasAutoPlayed && autoPlay) {
+      retryTimeoutRef.current = setInterval(() => {
+        if (!isPlaying && autoplayAttempts < 5) {
+          console.log('Mobile retry attempt');
+          attemptAutoplay();
+        }
+      }, 10000); // Retry every 10 seconds on mobile
+    }
+
+    return () => {
+      if (autoplayTimeoutRef.current) {
+        clearTimeout(autoplayTimeoutRef.current);
+      }
+      if (retryTimeoutRef.current) {
+        clearInterval(retryTimeoutRef.current);
+      }
+    };
+  }, [autoPlay, isPlaying, safePlay, hasAutoPlayed, userInteracted, isVisible, isMobile, autoplayAttempts]);
+
+  // Enhanced visibility change handling
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (audioRef.current && isPlaying && !document.hidden) {
+        console.log('Page became visible, attempting to resume music...');
+        safePlay();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isPlaying, safePlay]);
 
   const togglePlay = useCallback(async () => {
     if (audioRef.current) {
@@ -225,24 +376,18 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
     localStorage.setItem('music-volume', volume.toString());
   }, [volume]);
 
-  // Enhanced visibility change handling
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (audioRef.current && isPlaying && !document.hidden) {
-        safePlay();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [isPlaying, safePlay]);
-
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.src = '';
+      }
+      if (autoplayTimeoutRef.current) {
+        clearTimeout(autoplayTimeoutRef.current);
+      }
+      if (retryTimeoutRef.current) {
+        clearInterval(retryTimeoutRef.current);
       }
     };
   }, []);
@@ -256,9 +401,9 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
 
   return (
     <>
-      {/* Enhanced Floating Music Button with Undertale styling */}
+      {/* Enhanced Floating Music Button with mobile responsiveness */}
       <motion.div
-        className="fixed bottom-6 left-6 z-50"
+        className={`fixed z-50 ${isMobile ? 'bottom-4 left-4' : 'bottom-6 left-6'}`}
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={reducedMotion ? {} : { type: "spring", stiffness: 260, damping: 20 }}
@@ -268,14 +413,16 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
             setIsOpen(!isOpen);
             playButtonSound();
           }}
-          className="pixel-button bg-gradient-to-r from-pixel-purple to-pixel-pink text-white p-4 rounded-full shadow-lg hover:shadow-xl relative border-4 border-yellow-400"
+          className={`pixel-button bg-gradient-to-r from-pixel-purple to-pixel-pink text-white rounded-full shadow-lg hover:shadow-xl relative border-4 border-yellow-400 ${
+            isMobile ? 'p-3 text-lg' : 'p-4 text-2xl'
+          }`}
           whileHover={reducedMotion ? {} : { scale: 1.1, rotate: 5 }}
           whileTap={reducedMotion ? {} : { scale: 0.9 }}
           aria-label={isOpen ? 'Cerrar Reproductor de Música' : 'Abrir Reproductor de Música'}
           aria-expanded={isOpen}
           onMouseEnter={playButtonSound}
         >
-          <span className="text-2xl" aria-hidden="true">🎵</span>
+          <span aria-hidden="true">🎵</span>
           {isPlaying && (
             <motion.span
               className="absolute -top-2 -right-2 text-pixel-yellow text-xl"
@@ -295,21 +442,32 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
               ⏳
             </motion.div>
           )}
+          {!isPlaying && !isLoading && !hasAutoPlayed && (
+            <motion.div
+              className="absolute -top-2 -right-2 text-pixel-red text-xl"
+              animate={reducedMotion ? {} : { scale: [1, 1.2, 1] }}
+              transition={reducedMotion ? {} : { duration: 1, repeat: Infinity }}
+            >
+              ⚠️
+            </motion.div>
+          )}
         </motion.button>
       </motion.div>
 
-      {/* Enhanced Music Player Panel with Undertale styling */}
+      {/* Enhanced Music Player Panel with mobile responsiveness */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 100, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.8 }}
-            className="fixed bottom-20 left-6 z-40"
+            className={`fixed z-40 ${isMobile ? 'bottom-16 left-4 right-4' : 'bottom-20 left-6'}`}
             role="dialog"
             aria-label="Reproductor de Música"
           >
-            <div className="music-player-card p-6 max-w-sm border-4 border-yellow-400 bg-gradient-to-br from-purple-900 to-pink-800">
+            <div className={`music-player-card border-4 border-yellow-400 bg-gradient-to-br from-purple-900 to-pink-800 ${
+              isMobile ? 'p-4 max-w-full' : 'p-6 max-w-sm'
+            }`}>
               {error && (
                 <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                   <p className="pixel-text text-sm">
@@ -318,16 +476,24 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                 </div>
               )}
               
+              {!hasAutoPlayed && !isPlaying && (
+                <div className="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                  <p className="pixel-text text-sm">
+                    🎵 Toca cualquier parte de la pantalla para activar la música automáticamente
+                  </p>
+                </div>
+              )}
+              
               <div className="text-center mb-4">
-                <div className="text-4xl mb-2" aria-hidden="true">{currentSong.emoji}</div>
-                <h3 className="pixel-title text-lg text-yellow-300">{currentSong.title}</h3>
-                <p className="pixel-text text-sm opacity-80 text-white">{currentSong.artist}</p>
-                <p className="pixel-text text-xs opacity-70 text-white mt-2">{currentSong.description}</p>
+                <div className={`mb-2 ${isMobile ? 'text-3xl' : 'text-4xl'}`} aria-hidden="true">{currentSong.emoji}</div>
+                <h3 className={`pixel-title text-yellow-300 ${isMobile ? 'text-base' : 'text-lg'}`}>{currentSong.title}</h3>
+                <p className={`pixel-text opacity-80 text-white ${isMobile ? 'text-xs' : 'text-sm'}`}>{currentSong.artist}</p>
+                <p className={`pixel-text opacity-70 text-white mt-2 ${isMobile ? 'text-xs' : 'text-xs'}`}>{currentSong.description}</p>
               </div>
 
-              {/* Enhanced Volume Control */}
+              {/* Enhanced Volume Control with mobile touch support */}
               <div className="mb-4">
-                <label className="pixel-text text-sm block mb-2 text-yellow-300" htmlFor="volume-control">
+                <label className={`pixel-text block mb-2 text-yellow-300 ${isMobile ? 'text-xs' : 'text-sm'}`} htmlFor="volume-control">
                   Volumen
                 </label>
                 <input
@@ -338,8 +504,9 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                   step="0.1"
                   value={volume}
                   onChange={(e) => setVolume(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-pixel-purple rounded-lg appearance-none cursor-pointer"
+                  className="w-full h-2 bg-pixel-purple rounded-lg appearance-none cursor-pointer touch-manipulation"
                   aria-label="Control de volumen"
+                  style={{ touchAction: 'manipulation' }}
                 />
               </div>
 
@@ -352,20 +519,25 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                 onPause={() => setIsPlaying(false)}
                 onError={() => handleAudioError('Failed to load audio file')}
                 preload="auto"
+                muted={false}
+                loop={false}
               />
 
-              {/* Enhanced Controls with Undertale styling */}
-              <div className="music-controls mb-4">
+              {/* Enhanced Controls with mobile touch support */}
+              <div className={`music-controls mb-4 ${isMobile ? 'gap-2' : 'gap-1'}`}>
                 <motion.button
                   onClick={() => {
                     prevSong();
                     playButtonSound();
                   }}
-                  className="music-button bg-pixel-purple hover:bg-pixel-pink border-2 border-yellow-400"
+                  className={`music-button bg-pixel-purple hover:bg-pixel-pink border-2 border-yellow-400 ${
+                    isMobile ? 'w-12 h-12 text-lg' : 'w-12 h-12'
+                  }`}
                   whileHover={reducedMotion ? {} : { scale: 1.1 }}
                   whileTap={reducedMotion ? {} : { scale: 0.9 }}
                   aria-label="Canción Anterior"
                   onMouseEnter={playButtonSound}
+                  style={{ touchAction: 'manipulation' }}
                 >
                   ⏮️
                 </motion.button>
@@ -375,12 +547,15 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                     togglePlay();
                     playButtonSound();
                   }}
-                  className="music-button bg-pixel-green hover:bg-pixel-yellow text-xl border-2 border-yellow-400"
+                  className={`music-button bg-pixel-green hover:bg-pixel-yellow border-2 border-yellow-400 ${
+                    isMobile ? 'w-14 h-14 text-xl' : 'w-12 h-12 text-xl'
+                  }`}
                   whileHover={reducedMotion ? {} : { scale: 1.1 }}
                   whileTap={reducedMotion ? {} : { scale: 0.9 }}
                   aria-label={isPlaying ? 'Pausar Música' : 'Reproducir Música'}
                   disabled={isLoading}
                   onMouseEnter={playButtonSound}
+                  style={{ touchAction: 'manipulation' }}
                 >
                   {isLoading ? '⏳' : isPlaying ? '⏸️' : '▶️'}
                 </motion.button>
@@ -390,18 +565,23 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                     nextSong();
                     playButtonSound();
                   }}
-                  className="music-button bg-pixel-purple hover:bg-pixel-pink border-2 border-yellow-400"
+                  className={`music-button bg-pixel-purple hover:bg-pixel-pink border-2 border-yellow-400 ${
+                    isMobile ? 'w-12 h-12 text-lg' : 'w-12 h-12'
+                  }`}
                   whileHover={reducedMotion ? {} : { scale: 1.1 }}
                   whileTap={reducedMotion ? {} : { scale: 0.9 }}
                   aria-label="Siguiente Canción"
                   onMouseEnter={playButtonSound}
+                  style={{ touchAction: 'manipulation' }}
                 >
                   ⏭️
                 </motion.button>
               </div>
 
-              {/* Enhanced Song List with Undertale styling */}
-              <div className="space-y-2 max-h-32 overflow-y-auto">
+              {/* Enhanced Song List with mobile scrolling */}
+              <div className={`space-y-2 overflow-y-auto ${
+                isMobile ? 'max-h-24' : 'max-h-32'
+              }`}>
                 {songs.map((song, index) => (
                   <motion.button
                     key={song.id}
@@ -416,15 +596,16 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
                       }
                       playButtonSound();
                     }}
-                    className={`w-full text-left p-2 rounded pixel-text text-sm transition-colors border-2 ${
+                    className={`w-full text-left p-2 rounded pixel-text transition-colors border-2 ${
                       index === currentSongIndex
                         ? 'bg-pixel-yellow text-pixel-purple border-yellow-400'
                         : 'hover:bg-pixel-purple/20 border-transparent hover:border-yellow-400 text-white'
-                    }`}
+                    } ${isMobile ? 'text-xs' : 'text-sm'}`}
                     whileHover={reducedMotion ? {} : { x: 5 }}
                     aria-label={`Reproducir ${song.title} de ${song.artist}`}
                     aria-current={index === currentSongIndex ? "true" : "false"}
                     onMouseEnter={playButtonSound}
+                    style={{ touchAction: 'manipulation' }}
                   >
                     <span className="mr-2" aria-hidden="true">{song.emoji}</span>
                     {song.title}
@@ -434,7 +615,7 @@ const MusicPlayer = ({ autoPlay = true }: MusicPlayerProps) => {
 
               {/* Enhanced Emotional Support Message */}
               <div className="mt-4 p-3 bg-pink-100 border border-pink-300 rounded border-2 border-yellow-400">
-                <p className="pixel-text text-xs text-pink-800">
+                <p className={`pixel-text text-pink-800 ${isMobile ? 'text-xs' : 'text-xs'}`}>
                   💕 La música tiene el poder de sanar corazones y acercarnos más. Eres amada y especial.
                 </p>
               </div>

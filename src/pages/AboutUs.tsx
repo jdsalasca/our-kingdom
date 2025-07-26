@@ -7,31 +7,17 @@ const AboutUs = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const milestones = [
+    
     {
-      date: t('First Meeting'),
+      date: "En bogota",
       emoji: '👀',
-      description: t('The moment our eyes first met...'),
+      description: "riendonos juntos en Historia de amore :3.",
     },
     {
-      date: t('First Date'),
+      date: "Jugando en terraria",
       emoji: '💕',
-      description: t('Our magical first date together...'),
-    },
-    {
-      date: t('First Kiss'),
-      emoji: '💋',
-      description: t('A moment that changed everything...'),
-    },
-    {
-      date: t('Moving In'),
-      emoji: '🏠',
-      description: t('Building our home together...'),
-    },
-    {
-      date: t('Future Dreams'),
-      emoji: '🌟',
-      description: t('All the adventures yet to come...'),
-    },
+      description: "Explorando juntos y riendonos intentando no morir xd.",
+    }
   ];
 
   // Days since March 15, 2023
@@ -137,11 +123,7 @@ const AboutUs = () => {
             <div className='pixel-title text-xl'>{t('Countless')}</div>
             <div className='pixel-text'>{t('Laughs')}</div>
           </div>
-          <div>
-            <div className='text-4xl mb-2'>🏰</div>
-            <div className='pixel-title text-xl'>{t('Forever')}</div>
-            <div className='pixel-text'>{t('Together')}</div>
-          </div>
+        
         </div>
       </motion.div>
 

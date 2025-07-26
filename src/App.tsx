@@ -17,6 +17,8 @@ function App() {
   const [showBirthdayPresentation, setShowBirthdayPresentation] = useState(false);
   const [presentationComplete, setPresentationComplete] = useState(false);
   const [userInteracted, setUserInteracted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
 
   // Undertale Button Modal State
   type UndertaleActionType = 'Fight' | 'Act' | 'Item' | 'Mercy';
@@ -119,6 +121,18 @@ function App() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Check if birthday presentation has been shown
   useEffect(() => {
     const hasShownPresentation = localStorage.getItem('initial_presentation_showed') === 'true';
@@ -160,7 +174,7 @@ function App() {
   };
 
   // Optimized floating elements - reduced from 25 to 12 for better performance
-  const floatingElements = Array.from({ length: 12 }, (_, i) => ({
+  const floatingElements = Array.from({ length: isMobile ? 8 : 12 }, (_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
@@ -238,7 +252,7 @@ function App() {
         {/* Background Overlay for Contrast */}
         <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" aria-hidden="true" />
         
-        {/* Enhanced Navigation with Better Accessibility and Undertale styling */}
+        {/* Enhanced Navigation with mobile responsiveness */}
         <nav className="pixel-border bg-[#232336] backdrop-blur-md sticky top-0 z-30 shadow-2xl border-4 border-yellow-400" role="navigation" aria-label="Main navigation">
           <div className="max-w-6xl mx-auto px-4 py-4 md:py-5">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -248,58 +262,131 @@ function App() {
                 className="mb-2 md:mb-0"
               >
                 <motion.h1 
-                  className="pixel-title flex items-center gap-2 text-lg md:text-xl lg:text-2xl text-[#f4d03f] drop-shadow-lg"
+                  className={`pixel-title flex items-center gap-2 text-yellow-300 drop-shadow-lg ${
+                    isMobile ? 'text-lg' : 'text-lg md:text-xl lg:text-2xl'
+                  }`}
                   whileHover={reducedMotion ? {} : { scale: 1.05 }}
                 >
-                  <img src="/pixel-art-icon-heart_682225-16.avif" alt="Pixel Heart" className="inline-block w-8 h-8 align-middle" />
+                  <img src="/pixel-art-icon-heart_682225-16.avif" alt="Pixel Heart" className={`inline-block align-middle ${isMobile ? 'w-6 h-6' : 'w-8 h-8'}`} />
                   Nuestro Reino Feliz
-                  <img src="/pixel-art-icon-heart_682225-16.avif" alt="Pixel Heart" className="inline-block w-8 h-8 align-middle" />
+                  <img src="/pixel-art-icon-heart_682225-16.avif" alt="Pixel Heart" className={`inline-block align-middle ${isMobile ? 'w-6 h-6' : 'w-8 h-8'}`} />
                 </motion.h1>
               </motion.div>
               
-              <div className="flex flex-wrap gap-3 md:gap-6 justify-center items-center" role="menubar">
-                <Link to="/" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Ir al Dashboard"
+              {/* Mobile menu button */}
+              {isMobile && (
+                <button
+                  onClick={() => setNavOpen(!navOpen)}
+                  className="pixel-button border-2 border-yellow-400 p-2"
+                  aria-label="Toggle navigation menu"
                   onMouseEnter={playButtonSound}
                 >
-                  <span className="flex items-center gap-2">
-                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
-                    <span className="hidden sm:inline">Dashboard</span>
-                  </span>
-                </Link>
-                <Link to="/two-roads" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Explorar nuestro viaje"
-                  onMouseEnter={playButtonSound}
-                >
-                  <span className="flex items-center gap-2">
-                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
-                    <span className="hidden sm:inline">Dos Caminos</span>
-                  </span>
-                </Link>
-                <Link to="/our-play" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Jugar juntos"
-                  onMouseEnter={playButtonSound}
-                >
-                  <span className="flex items-center gap-2">
-                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
-                    <span className="hidden sm:inline">Nuestro Juego</span>
-                  </span>
-                </Link>
-                <Link to="/gallery" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Ver nuestros recuerdos"
-                  onMouseEnter={playButtonSound}
-                >
-                  <span className="flex items-center gap-2">
-                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
-                    <span className="hidden sm:inline">Galería</span>
-                  </span>
-                </Link>
-                <Link to="/about-us" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Conocer nuestra historia"
-                  onMouseEnter={playButtonSound}
-                >
-                  <span className="flex items-center gap-2">
-                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
-                    <span className="hidden sm:inline">Sobre Nosotros</span>
-                  </span>
-                </Link>
-              </div>
+                  <span className="text-lg">☰</span>
+                </button>
+              )}
+              
+              {/* Desktop navigation */}
+              {!isMobile && (
+                <div className="flex flex-wrap gap-3 md:gap-6 justify-center items-center" role="menubar">
+                  <Link to="/" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Ir al Dashboard"
+                    onMouseEnter={playButtonSound}
+                  >
+                    <span className="flex items-center gap-2">
+                      <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                      <span className="hidden sm:inline">Dashboard</span>
+                    </span>
+                  </Link>
+                  <Link to="/two-roads" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Explorar nuestro viaje"
+                    onMouseEnter={playButtonSound}
+                  >
+                    <span className="flex items-center gap-2">
+                      <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                      <span className="hidden sm:inline">Dos Caminos</span>
+                    </span>
+                  </Link>
+                  <Link to="/our-play" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Jugar juntos"
+                    onMouseEnter={playButtonSound}
+                  >
+                    <span className="flex items-center gap-2">
+                      <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                      <span className="hidden sm:inline">Nuestro Juego</span>
+                    </span>
+                  </Link>
+                  <Link to="/gallery" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Ver nuestros recuerdos"
+                    onMouseEnter={playButtonSound}
+                  >
+                    <span className="flex items-center gap-2">
+                      <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                      <span className="hidden sm:inline">Galería</span>
+                    </span>
+                  </Link>
+                  <Link to="/about-us" className="pixel-button border-2 border-yellow-400" role="menuitem" aria-label="Conocer nuestra historia"
+                    onMouseEnter={playButtonSound}
+                  >
+                    <span className="flex items-center gap-2">
+                      <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                      <span className="hidden sm:inline">Sobre Nosotros</span>
+                    </span>
+                  </Link>
+                </div>
+              )}
             </div>
+            
+            {/* Mobile navigation menu */}
+            {isMobile && navOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 space-y-2"
+              >
+                <Link to="/" className="pixel-button border-2 border-yellow-400 w-full text-center" role="menuitem" aria-label="Ir al Dashboard"
+                  onClick={() => setNavOpen(false)}
+                  onMouseEnter={playButtonSound}
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                    Dashboard
+                  </span>
+                </Link>
+                <Link to="/two-roads" className="pixel-button border-2 border-yellow-400 w-full text-center" role="menuitem" aria-label="Explorar nuestro viaje"
+                  onClick={() => setNavOpen(false)}
+                  onMouseEnter={playButtonSound}
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                    Dos Caminos
+                  </span>
+                </Link>
+                <Link to="/our-play" className="pixel-button border-2 border-yellow-400 w-full text-center" role="menuitem" aria-label="Jugar juntos"
+                  onClick={() => setNavOpen(false)}
+                  onMouseEnter={playButtonSound}
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                    Nuestro Juego
+                  </span>
+                </Link>
+                <Link to="/gallery" className="pixel-button border-2 border-yellow-400 w-full text-center" role="menuitem" aria-label="Ver nuestros recuerdos"
+                  onClick={() => setNavOpen(false)}
+                  onMouseEnter={playButtonSound}
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                    Galería
+                  </span>
+                </Link>
+                <Link to="/about-us" className="pixel-button border-2 border-yellow-400 w-full text-center" role="menuitem" aria-label="Conocer nuestra historia"
+                  onClick={() => setNavOpen(false)}
+                  onMouseEnter={playButtonSound}
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    <img src="/images/undertale/heart.png" alt="Heart" className="w-5 h-5" />
+                    Sobre Nosotros
+                  </span>
+                </Link>
+              </motion.div>
+            )}
           </div>
         </nav>
 
@@ -308,7 +395,7 @@ function App() {
           Saltar al contenido principal
         </a>
         
-        <main id="main-content" className="max-w-6xl mx-auto px-4 py-4 md:py-8 relative z-20">
+        <main id="main-content" className={`max-w-6xl mx-auto px-4 py-4 md:py-8 relative z-20 ${isMobile ? 'pb-20' : ''}`}>
           <AnimatePresence mode="wait">
             <Routes>
               <Route path="/" element={<Dashboard />} />
@@ -320,17 +407,17 @@ function App() {
           </AnimatePresence>
         </main>
 
-        {/* Enhanced Footer with Emotional Support and Undertale styling */}
+        {/* Enhanced Footer with mobile responsiveness */}
         <footer className="pixel-border bg-white/80 backdrop-blur-sm mt-8 md:mt-12 relative z-20 border-4 border-yellow-400" role="contentinfo">
           <div className="max-w-6xl mx-auto px-4 py-4 md:py-6 text-center">
             <motion.p 
-              className="pixel-text text-sm md:text-base"
+              className={`pixel-text ${isMobile ? 'text-sm' : 'text-sm md:text-base'}`}
               animate={reducedMotion ? {} : { opacity: [0.7, 1, 0.7] }}
               transition={reducedMotion ? {} : { duration: 3, repeat: Infinity }}
             >
               Hecho con 💕 para nuestro reino feliz juntos
             </motion.p>
-            <p className="pixel-text text-xs mt-2 opacity-80">
+            <p className={`pixel-text opacity-80 ${isMobile ? 'text-xs' : 'text-xs mt-2'}`}>
               Recuerda: Eres amada, eres fuerte, y nunca estás sola. 💕
             </p>
             <div className="flex justify-center items-center gap-4 mt-4">
@@ -362,46 +449,52 @@ function App() {
         {/* Emotional Support */}
         <EmotionalSupport />
 
-        {/* Enhanced Floating Undertale Button Group */}
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+        {/* Enhanced Floating Undertale Button Group with mobile positioning */}
+        <div className={`fixed z-50 flex flex-col gap-2 ${isMobile ? 'bottom-20 right-4' : 'bottom-6 right-6'}`}>
           {(['Fight', 'Act', 'Item', 'Mercy'] as UndertaleActionType[]).map((type) => (
             <motion.button
               key={type}
-              className="pixel-button bg-black/80 border-2 border-yellow-400 text-yellow-200 flex items-center gap-2 px-4 py-2 mb-1 hover:bg-yellow-600/80 hover:text-white transition-all shadow-lg"
+              className={`pixel-button bg-black/80 border-2 border-yellow-400 text-yellow-200 flex items-center gap-2 hover:bg-yellow-600/80 hover:text-white transition-all shadow-lg ${
+                isMobile ? 'px-3 py-2 text-xs' : 'px-4 py-2 mb-1'
+              }`}
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => { setUndertaleModal({ open: true, type: type as UndertaleActionType }); playButtonSound(); }}
               onMouseEnter={playButtonSound}
               aria-label={type}
+              style={{ touchAction: 'manipulation' }}
             >
-              <img src="/images/undertale/heart.png" alt="Heart" className="w-4 h-4" />
-              <span className="font-bold tracking-widest text-sm">{type}</span>
+              <img src="/images/undertale/heart.png" alt="Heart" className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'}`} />
+              <span className={`font-bold tracking-widest ${isMobile ? 'text-xs' : 'text-sm'}`}>{type}</span>
             </motion.button>
           ))}
         </div>
         
-        {/* Enhanced Undertale Modal */}
+        {/* Enhanced Undertale Modal with mobile responsiveness */}
         <AnimatePresence>
           {undertaleModal.open && undertaleModal.type && (
             <motion.div
-              className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100]"
+              className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100] p-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
               <motion.div
-                className="bg-white/90 rounded-lg shadow-2xl p-8 max-w-xs text-center border-4 border-yellow-400 relative"
+                className={`bg-white/90 rounded-lg shadow-2xl text-center border-4 border-yellow-400 relative ${
+                  isMobile ? 'p-6 max-w-xs w-full' : 'p-8 max-w-xs'
+                }`}
                 initial={{ scale: 0.8, y: 40 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.8, y: 40 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 18 }}
               >
-                <img src={undertaleActions[undertaleModal.type].img} alt={undertaleModal.type} className="mx-auto w-16 h-16 mb-4" />
-                <p className="pixel-text text-lg text-yellow-800 mb-4">{undertaleActions[undertaleModal.type].message}</p>
+                <img src={undertaleActions[undertaleModal.type].img} alt={undertaleModal.type} className={`mx-auto mb-4 ${isMobile ? 'w-12 h-12' : 'w-16 h-16'}`} />
+                <p className={`pixel-text text-yellow-800 mb-4 ${isMobile ? 'text-base' : 'text-lg'}`}>{undertaleActions[undertaleModal.type].message}</p>
                 <button
                   className="pixel-button bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500 transition border-2 border-yellow-600"
                   onClick={() => { setUndertaleModal({ open: false, type: null }); playButtonSound(); }}
                   autoFocus
+                  style={{ touchAction: 'manipulation' }}
                 >
                   OK
                 </button>
@@ -410,16 +503,18 @@ function App() {
           )}
         </AnimatePresence>
 
-        {/* Enhanced Floating Undertale Message */}
+        {/* Enhanced Floating Undertale Message with mobile responsiveness */}
         {floatingMessage.show && (
           <motion.div
-            className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100]"
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100] p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white/90 rounded-lg shadow-2xl p-6 max-w-sm text-center border-4 border-yellow-400 relative"
+              className={`bg-white/90 rounded-lg shadow-2xl text-center border-4 border-yellow-400 relative ${
+                isMobile ? 'p-4 max-w-sm w-full' : 'p-6 max-w-sm'
+              }`}
               initial={{ scale: 0.8, y: 40 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.8, y: 40 }}
@@ -431,11 +526,12 @@ function App() {
                 transform: 'translate(-50%, -50%)',
               }}
             >
-              <p className="pixel-text text-lg text-yellow-800 mb-4">{floatingMessage.message}</p>
+              <p className={`pixel-text text-yellow-800 mb-4 ${isMobile ? 'text-base' : 'text-lg'}`}>{floatingMessage.message}</p>
               <button
                 className="pixel-button bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500 transition border-2 border-yellow-600"
                 onClick={() => setFloatingMessage({ show: false, message: '', position: { x: 0, y: 0 } })}
                 autoFocus
+                style={{ touchAction: 'manipulation' }}
               >
                 OK
               </button>
